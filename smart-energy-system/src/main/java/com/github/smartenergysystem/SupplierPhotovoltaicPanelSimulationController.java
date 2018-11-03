@@ -5,11 +5,13 @@ import java.util.Map;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInput;
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
@@ -18,7 +20,7 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(produces ="application/json",tags = { SwaggerConfig.SUPPLIER_TAG_NAME})
 @RequestMapping("/supplier")
-public class SupplierSimulationController {
+public class SupplierPhotovoltaicPanelSimulationController {
 
 	@Autowired
 	ISimulationControllerService simulationControllerService;
@@ -38,6 +40,16 @@ public class SupplierSimulationController {
 		return panels;
 	}
 	
+	@GetMapping("/photovoltaicPanels/{panel-id}")
+	public PhotovoltaicPanel getPhotovoltaicPanel(@PathVariable("panel-id") long panelId) {
+		return simulationControllerService.getPhotovoltaicPanel(panelId);		
+	}
+	
+	@PostMapping("/photovoltaicPanels/{panel-id}/energyOutput")
+	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("panel-id") long panelId,@RequestBody PhotovoltaicPanelEnergyComuptationInput panelEnergyComuptationInput) {
+		PhotovoltaicPanel photovoltaicPanel = simulationControllerService.getPhotovoltaicPanel(panelId);
+		return photovoltaicPanel.computeEnergyGenerated(panelEnergyComuptationInput.getTemperatureInCelsius(), panelEnergyComuptationInput.getSunpowerHorizontal(), panelEnergyComuptationInput.getDayOfYear());		
+	}
 	
 
 }

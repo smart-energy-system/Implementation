@@ -1,7 +1,6 @@
 package com.github.smartenergysystem.simulation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +22,11 @@ public class SimulationControllerService implements ISimulationControllerService
 	
 	public synchronized Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels() {
 		return photovoltaicPanels;
+	}
+
+	@Override
+	public PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
+		return photovoltaicPanels.get(panelId);
 	}
 
 
