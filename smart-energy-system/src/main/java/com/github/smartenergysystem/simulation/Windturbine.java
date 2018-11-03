@@ -1,4 +1,4 @@
-package backend;
+package com.github.smartenergysystem.simulation;
 
 public class Windturbine {
 	private double bladeRadius;
