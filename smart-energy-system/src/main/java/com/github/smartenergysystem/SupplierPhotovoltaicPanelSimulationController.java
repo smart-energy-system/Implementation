@@ -15,6 +15,8 @@ import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInpu
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
+import com.github.smartenergysystem.simulation.Supplier;
+
 import io.swagger.annotations.Api;
 
 @RestController
@@ -26,7 +28,7 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	ISimulationControllerService simulationControllerService;
 
 	@PostMapping("/photovoltaicPanels")
-	public PhotovoltaicPanelWithIdDTO createPhotovoltaicPanel(@RequestBody PhotovoltaicPanel photovoltaicPanel) {
+	public PhotovoltaicPanelWithIdDTO addPhotovoltaicPanel(@RequestBody PhotovoltaicPanel photovoltaicPanel) {
 		Long id = simulationControllerService.addPhotovoltaicPanel(photovoltaicPanel);
 		PhotovoltaicPanelWithIdDTO photovoltaicPanelWithIdDTO = new PhotovoltaicPanelWithIdDTO();
 		BeanUtils.copyProperties(photovoltaicPanel, photovoltaicPanelWithIdDTO);
@@ -35,20 +37,25 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 	
 	@GetMapping("/photovoltaicPanels")
-	public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels(@RequestBody PhotovoltaicPanel photovoltaicPanel) {
+	public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels() {
 		Map<Long,PhotovoltaicPanel> panels = simulationControllerService.getPhotovoltaicPanels();
 		return panels;
 	}
 	
-	@GetMapping("/photovoltaicPanels/{panel-id}")
-	public PhotovoltaicPanel getPhotovoltaicPanel(@PathVariable("panel-id") long panelId) {
-		return simulationControllerService.getPhotovoltaicPanel(panelId);		
+	@GetMapping("/photovoltaicPanels/{id}")
+	public Supplier getPhotovoltaicPanel(@PathVariable("id") long id) {
+		return simulationControllerService.getPhotovoltaicPanel(id);		
 	}
 	
-	@PostMapping("/photovoltaicPanels/{panel-id}/energyOutput")
-	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("panel-id") long panelId,@RequestBody PhotovoltaicPanelEnergyComuptationInput panelEnergyComuptationInput) {
-		PhotovoltaicPanel photovoltaicPanel = simulationControllerService.getPhotovoltaicPanel(panelId);
+	@PostMapping("/photovoltaicPanels/{id}/energyOutput")
+	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id,@RequestBody PhotovoltaicPanelEnergyComuptationInput panelEnergyComuptationInput) {
+		PhotovoltaicPanel photovoltaicPanel = simulationControllerService.getPhotovoltaicPanel(id);
 		return photovoltaicPanel.computeEnergyGenerated(panelEnergyComuptationInput.getTemperatureInCelsius(), panelEnergyComuptationInput.getSunpowerHorizontal(), panelEnergyComuptationInput.getDayOfYear());		
+	}
+	
+	@GetMapping("/photovoltaicPanels/{id}/energyOutput")
+	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id) {
+		return simulationControllerService.computeEnergyGeneratedPhotovoltaicPanel(id);
 	}
 	
 

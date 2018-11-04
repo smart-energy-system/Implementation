@@ -10,14 +10,17 @@ public class SimulationControllerService implements ISimulationControllerService
 	
 	//Replace with a database after we decided which database we use
 	//probably no need for atomic types because of synchronized methods
-	Long id = 0L;
+	Long photovoltaicPanelsId = 0L;
 	HashMap<Long,PhotovoltaicPanel> photovoltaicPanels = new HashMap<>();
+	
+	Long windTurbineId = 0L;
+	HashMap<Long,WindTurbine> windPanels = new HashMap<>();
 	
 	@Override
 	public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
-		id++;
-		photovoltaicPanels.put(id,photovoltaicPanel);
-		return id;
+		photovoltaicPanelsId++;
+		photovoltaicPanels.put(photovoltaicPanelsId,photovoltaicPanel);
+		return photovoltaicPanelsId;
 	}
 	
 	public synchronized Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels() {
@@ -28,6 +31,38 @@ public class SimulationControllerService implements ISimulationControllerService
 	public PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
 		return photovoltaicPanels.get(panelId);
 	}
+
+	@Override
+	public Long addWindTurbine(WindTurbine windTurbine) {
+		windTurbineId++;
+		getWindTurbines().put(windTurbineId,windTurbine);
+		return windTurbineId;
+	}
+
+	@Override
+	public Map<Long, WindTurbine> getWindTurbines() {
+		return windPanels;
+	}
+
+	@Override
+	public WindTurbine getWindTurbine(Long turbineId) {
+		return windPanels.get(turbineId);
+	}
+
+	@Override
+	public double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
+		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
+		//Get From DB
+		//photovoltaicPanel.computeEnergyGenerated(temperatureInCelsius, sunpowerHorizontal, dayOfYear)
+		return 0;
+	}
+
+	@Override
+	public double computeEnergyGeneratedWindTurbine(Long panelId) {
+		return 0;
+	}
+	
+	
 
 
 }

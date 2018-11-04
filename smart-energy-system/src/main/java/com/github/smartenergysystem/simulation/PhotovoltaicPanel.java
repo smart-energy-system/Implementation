@@ -2,19 +2,19 @@ package com.github.smartenergysystem.simulation;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class PhotovoltaicPanel {
+public class PhotovoltaicPanel extends Supplier {
 	public static final double PERFORMANCE_RATIO_DEFAULT = 0.75;
-	@ApiModelProperty(required = false)
+	@ApiModelProperty(required = false, example = "0.75")
 	private double performanceRatio = PERFORMANCE_RATIO_DEFAULT;
+	@ApiModelProperty(required = true, example = "1")
 	private double moduleArea;
+	@ApiModelProperty(required = true)
 	private double maximumPowerYield;
+	@ApiModelProperty(required = true, example = "0.3")
 	private double tiltAngle;
-	private double latitude;
-	private double longitude;
-	
 
 	public PhotovoltaicPanel(double performanceRatio, double moduleArea, double maximumPowerYield, double tiltAngle,
-			double latitude) {
+			double latitude, double longitude) {
 		super();
 		this.performanceRatio = performanceRatio;
 		this.moduleArea = moduleArea;
@@ -22,27 +22,20 @@ public class PhotovoltaicPanel {
 		this.tiltAngle = tiltAngle;
 		this.latitude = latitude;
 	}
-	
-	public PhotovoltaicPanel() {};
 
-	public double getLongitude() {
-		return longitude;
-	}
-
-
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-
+	public PhotovoltaicPanel() {
+	};
 
 	public double getPerformanceRatio() {
 		return performanceRatio;
 	}
 
 	public void setPerformanceRatio(double performanceRatio) {
-		this.performanceRatio = performanceRatio;
+		if (performanceRatio > 0) {
+			this.performanceRatio = performanceRatio;
+		} else {
+			performanceRatio = PERFORMANCE_RATIO_DEFAULT;
+		}
 	}
 
 	public double getTiltAngle() {
@@ -95,4 +88,5 @@ public class PhotovoltaicPanel {
 		return getModuleArea() * getMaximumPowerYield() * computePerformanceRatio(temperatureInCelsius)
 				* computeSolarRadiationIncident(sunpowerHorizontal, dayOfYear);
 	}
+
 }

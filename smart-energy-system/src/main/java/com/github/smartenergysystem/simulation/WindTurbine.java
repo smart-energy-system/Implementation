@@ -1,6 +1,6 @@
 package com.github.smartenergysystem.simulation;
 
-public class WindTurbine {
+public class WindTurbine extends Supplier {
 	public static final int CONVERT_hPA_TO_PA = 100;
 	private static final double GAS_CONSTANT_WATER_VAPOR = 461.4964;
 	private static final double GAS_CONSTANT_DRY_AIR = 287.0531;
@@ -111,7 +111,7 @@ public class WindTurbine {
 	 * @param temperatureInCelsius
 	 * @return
 	 */
-	public double computePowerOutput(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
+	public double computeEnergyGenerated(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
 			double temperatureInCelsius) {
 		return (1 / 2) * computeMoistAirDensity(temperatureInCelsius, meassuredAirPressureInPascal, relativeHumidity)
 				* computeAreaSwept(getBladeRadius()) * Math.pow(windSpeed, 3) * getEfficiency();

@@ -1,9 +1,9 @@
 package com.github.smartenergysystem.model;
 
-import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
+import com.github.smartenergysystem.simulation.WindTurbine;
 
-public class PhotovoltaicPanelWithIdDTO extends PhotovoltaicPanel {
-
+public class WindTurbineWithIdDTO extends WindTurbine {
+	
 	private Long id;
 
 	public Long getId() {
@@ -13,7 +13,5 @@ public class PhotovoltaicPanelWithIdDTO extends PhotovoltaicPanel {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	
 
 }
