@@ -72,17 +72,17 @@ public class PhotovoltaicPanel extends Supplier {
 	
 	/**
 	 * Solves A2.6.
-	 * @param temperatureInCelsius
-	 * @return
+	 * @param temperatureInCelsius in degrees Celsius
+	 * @return positive percentage of energyloss as double: 0.13 for example
 	 */
 	public double computeTemperatureLoss(double temperatureInCelsius) {
-		return Math.min(((int) (temperatureInCelsius - 25) * -0.005), 0);
+		return Math.max(((int) (temperatureInCelsius - 25) * 0.005), 0);
 	}
 	
 	/**
 	 * Solves A2.7.
-	 * @param temperatureInCelsius
-	 * @return
+	 * @param temperatureInCelsius in degrees Celsius
+	 * @return ratio between 0 and 1 for performance
 	 */
 	public double computePerformanceRatio(double temperatureInCelsius) {
 		return 1.0 - (0.14 + computeTemperatureLoss(temperatureInCelsius));
@@ -91,7 +91,7 @@ public class PhotovoltaicPanel extends Supplier {
 	/**
 	 * Solves A2.8.
 	 * @param sunpowerHorizontal
-	 * @param dayOfYear
+	 * @param dayOfYear as Integer
 	 * @return
 	 */
 	public double computeSolarRadiationIncident(double sunpowerHorizontal, int dayOfYear) {
@@ -102,9 +102,9 @@ public class PhotovoltaicPanel extends Supplier {
 
 	/**
 	 * Solves A2.9.
-	 * @param temperatureInCelsius
+	 * @param temperatureInCelsius in degree Celsius
 	 * @param sunpowerHorizontal
-	 * @param dayOfYear
+	 * @param dayOfYear as Integer
 	 * @return
 	 */
 	public double computeEnergyGenerated(double temperatureInCelsius, double sunpowerHorizontal, int dayOfYear) {
