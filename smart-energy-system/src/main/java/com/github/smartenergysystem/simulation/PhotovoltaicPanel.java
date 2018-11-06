@@ -69,21 +69,44 @@ public class PhotovoltaicPanel extends Supplier {
 	public void setMaximumPowerYield(double maximumPowerYield) {
 		this.maximumPowerYield = maximumPowerYield;
 	}
-
+	
+	/**
+	 * Solves A2.6.
+	 * @param temperatureInCelsius
+	 * @return
+	 */
 	public double computeTemperatureLoss(double temperatureInCelsius) {
 		return Math.min(((int) (temperatureInCelsius - 25) * -0.005), 0);
 	}
-
+	
+	/**
+	 * Solves A2.7.
+	 * @param temperatureInCelsius
+	 * @return
+	 */
 	public double computePerformanceRatio(double temperatureInCelsius) {
 		return 1.0 - (0.14 + computeTemperatureLoss(temperatureInCelsius));
 	}
-
+	
+	/**
+	 * Solves A2.8.
+	 * @param sunpowerHorizontal
+	 * @param dayOfYear
+	 * @return
+	 */
 	public double computeSolarRadiationIncident(double sunpowerHorizontal, int dayOfYear) {
 		double delta = 23.45 * Math.sin((360 / 365) * (284 + dayOfYear));
 		double alpha = 90 - getLatitude() + delta;
 		return (sunpowerHorizontal * Math.sin(alpha + getTiltAngle())) / Math.sin(alpha);
 	}
 
+	/**
+	 * Solves A2.9.
+	 * @param temperatureInCelsius
+	 * @param sunpowerHorizontal
+	 * @param dayOfYear
+	 * @return
+	 */
 	public double computeEnergyGenerated(double temperatureInCelsius, double sunpowerHorizontal, int dayOfYear) {
 		return getModuleArea() * getMaximumPowerYield() * computePerformanceRatio(temperatureInCelsius)
 				* computeSolarRadiationIncident(sunpowerHorizontal, dayOfYear);
