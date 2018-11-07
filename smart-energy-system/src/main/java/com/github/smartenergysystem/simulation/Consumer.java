@@ -23,7 +23,7 @@ public abstract class Consumer {
 		this.averageDailyOccupancy = averageDailyOccupancy;
 	}
 	
-	public abstract double calculateDemant(int hourOfTheDay);
+	public abstract double calculateDemand(int hourOfTheDay);
 	
 	
 
