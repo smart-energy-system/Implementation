@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInput;
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
@@ -57,8 +60,8 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
-	public double getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id) {
-		return simulationControllerService.computeEnergyGeneratedPhotovoltaicPanel(id);
+	public EnergyForecast getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id,@RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
+		return simulationControllerService.computeEnergyGenerateForecastPhotovoltaicPanel(id, maxTimestampOffset);
 	}
 	
 	

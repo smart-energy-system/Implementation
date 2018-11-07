@@ -1,8 +1,10 @@
 package com.github.smartenergysystem.simulation;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,35 +87,46 @@ public class SimulationControllerService implements ISimulationControllerService
 
 	@Override
 	public WindTurbine getWindTurbine(Long turbineId) {
-		if(!windTurbines.containsKey(turbineId)){
+		if (windTurbines.containsKey(turbineId)) {
+			return windTurbines.get(turbineId);
+		} else {
 			throw new IdNotFoundException();
 		}
-		return windTurbines.get(turbineId);
 	}
 
 	@Override
 	public double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
+		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(panelId, photovoltaicPanels);
 		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
-		// Get From DB
-		// photovoltaicPanel.computeEnergyGenerated(temperatureInCelsius,
-		// sunpowerHorizontal, dayOfYear)
-		return 0;
+		int dayOfTheYear = getDayOfTheYear(weatherHistory.getTimestamp());
+		logger.debug("Calculating photovoltaic panel energy for temp:" + weatherHistory.getTemperature() + " sunpower:"
+				+ weatherHistory.getSolarRadiation() + " dayOfTheYear:" + dayOfTheYear);
+		double energy = photovoltaicPanel.computeEnergyGenerated(weatherHistory.getTemperature(),
+				weatherHistory.getSolarRadiation(), dayOfTheYear);
+		logger.debug("Result:" + energy);
+		return energy;
+
 	}
 
 	@Override
 	public double computeEnergyGeneratedWindTurbine(Long id) {
-		if (windTurbines.containsKey(id)) {
-			WindTurbine windTurbine = windTurbines.get(id);
-			logger.debug("Requesting most recent weather data for wind turbine " + id);
+		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(id, windTurbines);
+		WindTurbine windTurbine = windTurbines.get(id);
+		double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
+				weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(), weatherHistory.getTemperature());
+		return energy;
+	}
+
+	private WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
+			HashMap<Long, ? extends PositionEntity> entityList) {
+		if (entityList.containsKey(id)) {
+			PositionEntity entity = entityList.get(id);
+			logger.debug("Requesting most recent weather data for entity " + id);
 			WeatherHistory weatherHistory = weatherForecastRepository
-					.findFirstByLatitudeAndLongitudeOrderByTimestampDesc(windTurbine.getLatitude(),
-							windTurbine.getLongitude());
+					.findFirstByLatitudeAndLongitudeOrderByTimestampDesc(entity.getLatitude(), entity.getLongitude());
 			if (weatherHistory != null) {
 				logger.debug("Most recent data is from:" + weatherHistory.getTimestamp());
-				double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
-						weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(),
-						weatherHistory.getTemperature());
-				return energy;
+				return weatherHistory;
 			} else {
 				throw new NoWeatherDataFoundException();
 			}
@@ -122,9 +135,29 @@ public class SimulationControllerService implements ISimulationControllerService
 		}
 	}
 
+	private int getDayOfTheYear(long timestamp) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timestamp);
+		int dayOfTheYear = cal.get(Calendar.DAY_OF_YEAR);
+		return dayOfTheYear;
+	}
+
 	@Override
-	public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id) {
-		return null;
+	public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id, long maxTimestampOffset) {
+		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
+				photovoltaicPanels);
+		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
+		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
+		weatherForecastList.forEach(weatherforecast -> {
+			double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
+					weatherforecast.getSolarRadiation(), getDayOfTheYear(weatherforecast.getTimestamp()));
+			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
+		});
+		EnergyForecast energyForecast = new EnergyForecast();
+		logger.debug("Size of generation forecast:" + energyforecastMap.size());
+		energyForecast.setForecast(energyforecastMap);
+		return energyForecast;
+
 	}
 
 	/**
@@ -132,26 +165,35 @@ public class SimulationControllerService implements ISimulationControllerService
 	 */
 	@Override
 	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
-		if (windTurbines.containsKey(id)) {
-			WindTurbine windTurbine = windTurbines.get(id);
-			logger.debug("Requesting forecast data for wind turbine " + id);
+		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset, windTurbines);
+		logger.debug("Got " + weatherForecastList.size() + " forecasts");
+		WindTurbine windTurbine = windTurbines.get(id);
+		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
+		weatherForecastList.forEach(weatherforecast -> {
+			logger.debug("Weatherforecast " + weatherforecast.toString());
+			double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(),
+					weatherforecast.getAirPressureInPascal(), weatherforecast.getHumidity(),
+					weatherforecast.getTemperature());
+			logger.debug("Energy for this forecast:" + energy);
+			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
+		});
+		EnergyForecast energyForecast = new EnergyForecast();
+		logger.debug("Size of generation forecast:" + energyforecastMap.size());
+		energyForecast.setForecast(energyforecastMap);
+		return energyForecast;
+	}
+
+	private List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
+			HashMap<Long, ? extends PositionEntity> entityList) {
+		if (entityList.containsKey(id)) {
+			PositionEntity entity = entityList.get(id);
+			logger.debug("Requesting forecast data for entity " + id);
 			List<WeatherForecast> weatherForecastList = weatherForecastRepository
-					.findByLatitudeAndLongitudeAndTimestampLessThan(windTurbine.latitude, windTurbine.longitude,
+					.findByLatitudeAndLongitudeAndTimestampLessThan(entity.getLatitude(), entity.getLongitude(),
 							System.currentTimeMillis() + maxTimestampOffset);
 			if (weatherForecastList != null && weatherForecastList.size() > 0) {
-				logger.debug("Got " + weatherForecastList.size() + " forecasts");
-				EnergyForecast energyForecast = new EnergyForecast();
-				HashMap<Long, Double> energyforecastList = new HashMap<>();
-				weatherForecastList.forEach(weatherforecast -> {
-					logger.debug("Weatherforecast " + weatherforecast.toString());
-					double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(),
-							weatherforecast.getAirPressureInPascal(), weatherforecast.getHumidity(), weatherforecast.getTemperature());
-					logger.debug("Energy for this forecast:" + energy);
-					energyforecastList.put(weatherforecast.getTimestamp(), energy);
-				});
-				energyForecast.setForecast(energyforecastList);
-				return energyForecast;
-			}else {
+				return weatherForecastList;
+			} else {
 				logger.debug("Got none forecasts");
 				throw new NoWeatherDataFoundException();
 			}

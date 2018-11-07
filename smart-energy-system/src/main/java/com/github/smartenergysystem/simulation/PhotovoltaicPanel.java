@@ -1,14 +1,25 @@
 package com.github.smartenergysystem.simulation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class PhotovoltaicPanel extends PositionEntity {
+	
+	/**
+	 * Accounts for all constant losses like cable loss
+	 */
+	private static final double L0 = 0.14; 
+
+	Logger logger = LoggerFactory.getLogger(PhotovoltaicPanel.class);
+	
 	public static final double PERFORMANCE_RATIO_DEFAULT = 0.75;
 	@ApiModelProperty(required = false, example = "0.75")
 	private double performanceRatio = PERFORMANCE_RATIO_DEFAULT;
 	@ApiModelProperty(required = true, example = "1")
 	private double moduleArea;
-	@ApiModelProperty(required = true)
+	@ApiModelProperty(required = true, example = "260")
 	private double maximumPowerYield;
 	@ApiModelProperty(required = true, example = "0.3")
 	private double tiltAngle;
@@ -84,8 +95,8 @@ public class PhotovoltaicPanel extends PositionEntity {
 	 * @param temperatureInCelsius in degrees Celsius
 	 * @return ratio between 0 and 1 for performance
 	 */
-	public double computePerformanceRatio(double temperatureInCelsius) {
-		return 1.0 - (0.14 + computeTemperatureLoss(temperatureInCelsius));
+	public double computeTotalLosses(double temperatureInCelsius) {
+		return L0 + computeTemperatureLoss(temperatureInCelsius);
 	}
 	
 	/**
@@ -108,7 +119,10 @@ public class PhotovoltaicPanel extends PositionEntity {
 	 * @return energy generated in W
 	 */
 	public double computeEnergyGenerated(double temperatureInCelsius, double sunpowerHorizontal, int dayOfYear) {
-		return getModuleArea() * getMaximumPowerYield() * computePerformanceRatio(temperatureInCelsius)
+		logger.debug("Calculate energy for a photovoltaic panel  with temperatureInCelsius:" + temperatureInCelsius
+				+ " sunpowerHorizontal:" + sunpowerHorizontal + " dayOfYear:" + dayOfYear);
+		double performanceRatio = 1 - computeTotalLosses(temperatureInCelsius);
+		return getModuleArea() * getMaximumPowerYield() * performanceRatio
 				* computeSolarRadiationIncident(sunpowerHorizontal, dayOfYear);
 	}
 

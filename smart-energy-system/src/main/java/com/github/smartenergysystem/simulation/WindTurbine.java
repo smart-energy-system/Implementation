@@ -148,7 +148,7 @@ public class WindTurbine extends PositionEntity {
 	 */
 	public double computeEnergyGenerated(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
 			double temperatureInCelsius) {
-		logger.debug("Calculation energy for wind turbine with: windSpeed:"+windSpeed+ " meassuredAirPressureInPascal:"+meassuredAirPressureInPascal + " relativeHumidity:"+ relativeHumidity +
+		logger.debug("Calculate energy for wind turbine with: windSpeed:"+windSpeed+ " meassuredAirPressureInPascal:"+meassuredAirPressureInPascal + " relativeHumidity:"+ relativeHumidity +
 				" temperatureInCelsius:"+temperatureInCelsius);
 		double moistAirDensity = computeMoistAirDensity(temperatureInCelsius, meassuredAirPressureInPascal,
 				relativeHumidity);

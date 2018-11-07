@@ -11,7 +11,7 @@ public class WeatherData extends PositionEntity {
 	
 	@Id
 	@Column(name = "id")
-	private long id;
+	private String id;
 	
 	@Column(name = "temp")
 	private double temperature;
@@ -28,11 +28,19 @@ public class WeatherData extends PositionEntity {
 	@Column(name = "timestamp")
 	private long timestamp;
 	
+	@Column(name = "solarradiation")
+	private double solarRadiation;
 	
-	public long getId() {
+	public double getSolarRadiation() {
+		return solarRadiation;
+	}
+	public void setSolarRadiation(double solarRadiation) {
+		this.solarRadiation = solarRadiation;
+	}
+	public String getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public double getTemperature() {

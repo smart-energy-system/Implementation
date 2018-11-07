@@ -9,7 +9,7 @@ public interface ISimulationControllerService {
 	public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels();
 	public PhotovoltaicPanel getPhotovoltaicPanel(Long panelId);
 	public double computeEnergyGeneratedPhotovoltaicPanel(Long panelId);
-	public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long panelId);
+	public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long panelId, long maxTimestampOffset);
 	
 	public Long addWindTurbine(WindTurbine windTurbine);
 	public Map<Long,WindTurbine> getWindTurbines();
