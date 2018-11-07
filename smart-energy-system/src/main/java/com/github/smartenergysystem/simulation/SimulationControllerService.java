@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.weather.WeatherForecast;
-import com.github.smartenergysystem.weather.WeatherForecastRepository;
+import com.github.smartenergysystem.weather.WeatherHistory;
+import com.github.smartenergysystem.weather.WeatherRepository;
 import com.github.smartenergysystem.weather.WeatherRequest;
 import com.github.smartenergysystem.weather.WeatherResponse;
 
@@ -25,7 +26,7 @@ public class SimulationControllerService implements ISimulationControllerService
 	Logger logger = LoggerFactory.getLogger(SimulationControllerService.class);
 
 	@Autowired
-	WeatherForecastRepository weatherForecastRepository;
+	WeatherRepository weatherForecastRepository;
 
 	@Value("${weatherService.url}")
 	String weatherServiceUrl;
@@ -82,6 +83,9 @@ public class SimulationControllerService implements ISimulationControllerService
 
 	@Override
 	public WindTurbine getWindTurbine(Long turbineId) {
+		if(!windTurbines.containsKey(turbineId)){
+			throw new IdNotFoundException();
+		}
 		return windTurbines.get(turbineId);
 	}
 
@@ -95,8 +99,19 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public double computeEnergyGeneratedWindTurbine(Long panelId) {
-		return 0;
+	public double computeEnergyGeneratedWindTurbine(Long id) {
+		if (windTurbines.containsKey(id)) {
+			WindTurbine windTurbine = windTurbines.get(id);
+			WeatherHistory weatherHistory = weatherForecastRepository
+					.findFirstByLatitudeAndLongitudeOrderByTimestampDesc(windTurbine.getLatitude(),
+							windTurbine.getLongitude());
+			double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
+					weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(),
+					weatherHistory.getTemperature());
+			return energy;
+		} else {
+			throw new IdNotFoundException();
+		}
 	}
 
 	@Override
@@ -104,39 +119,36 @@ public class SimulationControllerService implements ISimulationControllerService
 		return null;
 	}
 
+	/**
+	 * Solves A2.5
+	 */
 	@Override
-	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id) {
-		WindTurbine windTurbine = windTurbines.get(id);
-		logger.debug("Requesting forecast data for wind turbine " + id);
-		List<WeatherForecast> weatherForecastList = weatherForecastRepository
-				.findByLatitudeAndLongitude(windTurbine.latitude, windTurbine.longitude);
-		if (weatherForecastList != null && weatherForecastList.size() > 0) {
-			logger.debug("Got " + weatherForecastList.size() + " forecasts");
-			EnergyForecast energyForecast = new EnergyForecast();
-			HashMap<Long, Double> energyforecastList = new HashMap<>();
-			weatherForecastList.forEach(weatherforecast -> {
-				logger.debug("Weatherforecast " + weatherforecast.toString());
-				double airPressureInPascal = weatherforecast.getAirPressure() * WindTurbine.CONVERT_hPA_TO_PA;
-				double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(), airPressureInPascal,
-						weatherforecast.getHumidity(), weatherforecast.getTemperature());
-				logger.debug("Energy for this forecast:" + energy);
-				energyforecastList.put(weatherforecast.getTimestamp(),energy);
-			});
-			energyForecast.setForecast(energyforecastList);
-			return energyForecast;
+	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
+		if (windTurbines.containsKey(id)) {
+			WindTurbine windTurbine = windTurbines.get(id);
+			logger.debug("Requesting forecast data for wind turbine " + id);
+			List<WeatherForecast> weatherForecastList = weatherForecastRepository
+					.findByLatitudeAndLongitudeAndTimestampLessThan(windTurbine.latitude, windTurbine.longitude,
+							System.currentTimeMillis() + maxTimestampOffset);
+			if (weatherForecastList != null && weatherForecastList.size() > 0) {
+				logger.debug("Got " + weatherForecastList.size() + " forecasts");
+				EnergyForecast energyForecast = new EnergyForecast();
+				HashMap<Long, Double> energyforecastList = new HashMap<>();
+				weatherForecastList.forEach(weatherforecast -> {
+					logger.debug("Weatherforecast " + weatherforecast.toString());
+					double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(),
+							weatherforecast.getAirPressureInPascal(), weatherforecast.getHumidity(), weatherforecast.getTemperature());
+					logger.debug("Energy for this forecast:" + energy);
+					energyforecastList.put(weatherforecast.getTimestamp(), energy);
+				});
+				energyForecast.setForecast(energyforecastList);
+				return energyForecast;
+			}
+			logger.debug("Got none forecasts");
+			return null;
+		} else {
+			throw new IdNotFoundException();
 		}
-		logger.debug("Got none forecasts");
-		return null;
-	}
-
-	@Override
-	public boolean existsPhotovoltaicPanel(Long panelId) {
-		return photovoltaicPanels.containsKey(panelId);
-	}
-
-	@Override
-	public boolean existsWindTurbine(Long turbineId) {
-		return windTurbines.containsKey(turbineId);
 	}
 
 }

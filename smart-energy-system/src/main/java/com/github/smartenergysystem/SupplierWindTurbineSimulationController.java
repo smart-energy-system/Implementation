@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.smartenergysystem.model.EnergyForecast;
@@ -70,9 +71,10 @@ public class SupplierWindTurbineSimulationController {
 	
 	@ApiOperation("Returns the forecast for the production")
 	@GetMapping(value = "/windTurbines/{id}/energyOutputForecast",produces = {MediaType.APPLICATION_JSON_VALUE})
-	public EnergyForecast getWindTurbineEnergyOutputForecast(@PathVariable("id") long id) {
+	public EnergyForecast getWindTurbineEnergyOutputForecast(@PathVariable("id") long id,@RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
+		System.out.println(Long.MAX_VALUE);
 		logger.trace("Request to WindTubine getWindTurbineEnergyOutputForecast");
-		return simulationControllerService.computeEnergyGenerateForecastWindTurbine(id);
+		return simulationControllerService.computeEnergyGenerateForecastWindTurbine(id,maxTimestampOffset);
 	}
 
 }
