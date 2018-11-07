@@ -8,7 +8,7 @@ public class OfficeBuilding extends Consumer{
 	}
 
 	@Override
-	public double calculateDemant(int hourOfTheDay) {
+	public double calculateDemand(int hourOfTheDay) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
