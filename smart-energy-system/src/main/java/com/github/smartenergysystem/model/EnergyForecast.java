@@ -8,7 +8,7 @@ public class EnergyForecast {
 	
 	
 	
-	private static final String UNIT = "Wh";
+	private static final String UNIT = "W";
 	@ApiModelProperty(value = "The unit of the energy forecast", example = UNIT)
 	private String unit = UNIT;
 	

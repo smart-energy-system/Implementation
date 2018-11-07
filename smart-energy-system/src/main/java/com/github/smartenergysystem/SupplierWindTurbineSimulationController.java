@@ -55,9 +55,13 @@ public class SupplierWindTurbineSimulationController {
 	
 	@ApiOperation(value = "Returns the energy output for the given input parameters.")
 	@PostMapping("/windTurbines/{id}/energyOutput")
-	public double getWindTurbineEnergyOutput(@PathVariable("id") long id,@RequestBody WindTurbineEnergyComputationInput windTurbineEnergyComputationInput) {
+	public double getWindTurbineEnergyOutput(@PathVariable("id") long id,
+			@RequestBody WindTurbineEnergyComputationInput windTurbineEnergyComputationInput) {
 		WindTurbine turbine = simulationControllerService.getWindTurbine(id);
-		return turbine.computeEnergyGenerated(windTurbineEnergyComputationInput.getWindSpeed(), windTurbineEnergyComputationInput.getMeassuredAirPressureInPascal(), windTurbineEnergyComputationInput.getRelativeHumidity(), windTurbineEnergyComputationInput.getTemperatureInCelsius());
+		return turbine.computeEnergyGenerated(windTurbineEnergyComputationInput.getWindSpeed(),
+				windTurbineEnergyComputationInput.getMeassuredAirPressureInPascal(),
+				windTurbineEnergyComputationInput.getRelativeHumidity(),
+				windTurbineEnergyComputationInput.getTemperatureInCelsius());
 	}
 	
 	@ApiOperation(value = "Returns the energy output for the most recent values from the database")

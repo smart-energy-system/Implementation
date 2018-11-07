@@ -1,8 +1,14 @@
 package com.github.smartenergysystem.simulation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class WindTurbine extends PositionEntity {
+	
+	Logger logger = LoggerFactory.getLogger(WindTurbine.class);
+	
 	public static final int CONVERT_hPA_TO_PA = 100;
 	private static final double GAS_CONSTANT_WATER_VAPOR = 461.4964;
 	private static final double GAS_CONSTANT_DRY_AIR = 287.0531;
@@ -142,6 +148,8 @@ public class WindTurbine extends PositionEntity {
 	 */
 	public double computeEnergyGenerated(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
 			double temperatureInCelsius) {
+		logger.debug("Calculation energy for wind turbine with: windSpeed:"+windSpeed+ " meassuredAirPressureInPascal:"+meassuredAirPressureInPascal + " relativeHumidity:"+ relativeHumidity +
+				" temperatureInCelsius:"+temperatureInCelsius);
 		double moistAirDensity = computeMoistAirDensity(temperatureInCelsius, meassuredAirPressureInPascal,
 				relativeHumidity);
 		double areaSwept = computeAreaSwept(getBladeRadius());
