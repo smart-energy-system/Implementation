@@ -140,11 +140,11 @@ public class WindTurbine extends PositionEntity {
 	// P_avail = 1/2*p*A*v^3*C_p
 	/**
 	 * 
-	 * @param windSpeed
-	 * @param meassuredAirPressureInPascal
-	 * @param relativeHumidity
-	 * @param temperatureInCelsius
-	 * @return
+	 * @param windSpeed in m/s
+	 * @param meassuredAirPressureInPascal in pascal
+	 * @param relativeHumidity as double
+	 * @param temperatureInCelsius in degrees Celsius
+	 * @return energy generated in W
 	 */
 	public double computeEnergyGenerated(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
 			double temperatureInCelsius) {
