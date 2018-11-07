@@ -1,6 +1,8 @@
 package com.github.smartenergysystem.simulation;
 
-public class WindTurbine extends Supplier {
+import io.swagger.annotations.ApiModelProperty;
+
+public class WindTurbine extends PositionEntity {
 	public static final int CONVERT_hPA_TO_PA = 100;
 	private static final double GAS_CONSTANT_WATER_VAPOR = 461.4964;
 	private static final double GAS_CONSTANT_DRY_AIR = 287.0531;
@@ -18,7 +20,10 @@ public class WindTurbine extends Supplier {
 			0.11112018E-16, // C8
 			-0.30994571E-20 }; // C9
 
+	@ApiModelProperty(value = "The radius of the blades, measured from the center to the tips (in meter).", example = "10")
 	private double bladeRadius;
+	
+	@ApiModelProperty(example = "1")
 	private double efficiency;
 
 	public void setBladeRadius(double newRadius) {
@@ -113,7 +118,9 @@ public class WindTurbine extends Supplier {
 	 */
 	public double computeEnergyGenerated(double windSpeed, double meassuredAirPressureInPascal, double relativeHumidity,
 			double temperatureInCelsius) {
-		return (1 / 2) * computeMoistAirDensity(temperatureInCelsius, meassuredAirPressureInPascal, relativeHumidity)
-				* computeAreaSwept(getBladeRadius()) * Math.pow(windSpeed, 3) * getEfficiency();
+		double moistAirDensity = computeMoistAirDensity(temperatureInCelsius, meassuredAirPressureInPascal,
+				relativeHumidity);
+		double areaSwept = computeAreaSwept(getBladeRadius());
+		return 0.5 * moistAirDensity * areaSwept * Math.pow(windSpeed, 3) * getEfficiency();
 	}
 }

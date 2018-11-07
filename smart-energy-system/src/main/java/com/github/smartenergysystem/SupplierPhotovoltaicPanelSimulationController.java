@@ -10,13 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInput;
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
-import com.github.smartenergysystem.simulation.Supplier;
-
+import com.github.smartenergysystem.simulation.PositionEntity;
 import io.swagger.annotations.Api;
 
 @RestController
@@ -43,10 +41,10 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}")
-	public Supplier getPhotovoltaicPanel(@PathVariable("id") long id) {
+	public PositionEntity getPhotovoltaicPanel(@PathVariable("id") long id) {
 		return simulationControllerService.getPhotovoltaicPanel(id);		
 	}
-	
+
 	@PostMapping("/photovoltaicPanels/{id}/energyOutput")
 	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id,@RequestBody PhotovoltaicPanelEnergyComuptationInput panelEnergyComuptationInput) {
 		PhotovoltaicPanel photovoltaicPanel = simulationControllerService.getPhotovoltaicPanel(id);
@@ -57,6 +55,12 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id) {
 		return simulationControllerService.computeEnergyGeneratedPhotovoltaicPanel(id);
 	}
+	
+	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
+	public double getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id) {
+		return simulationControllerService.computeEnergyGeneratedPhotovoltaicPanel(id);
+	}
+	
 	
 
 }

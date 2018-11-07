@@ -2,7 +2,7 @@ package com.github.smartenergysystem.simulation;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class PhotovoltaicPanel extends Supplier {
+public class PhotovoltaicPanel extends PositionEntity {
 	public static final double PERFORMANCE_RATIO_DEFAULT = 0.75;
 	@ApiModelProperty(required = false, example = "0.75")
 	private double performanceRatio = PERFORMANCE_RATIO_DEFAULT;
