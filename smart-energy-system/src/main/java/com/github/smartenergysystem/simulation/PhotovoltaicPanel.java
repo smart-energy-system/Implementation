@@ -103,7 +103,7 @@ public class PhotovoltaicPanel extends Supplier {
 	/**
 	 * Solves A2.9.
 	 * @param temperatureInCelsius in degree Celsius
-	 * @param sunpowerHorizontal
+	 * @param sunpowerHorizontal in W/(m^2)
 	 * @param dayOfYear as Integer
 	 * @return energy generated in W
 	 */
