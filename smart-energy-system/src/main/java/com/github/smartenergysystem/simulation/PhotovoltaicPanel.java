@@ -90,9 +90,9 @@ public class PhotovoltaicPanel extends Supplier {
 	
 	/**
 	 * Solves A2.8.
-	 * @param sunpowerHorizontal
+	 * @param sunpowerHorizontal in W/(m^2)
 	 * @param dayOfYear as Integer
-	 * @return
+	 * @return solarradiation incident in W/(m^2)
 	 */
 	public double computeSolarRadiationIncident(double sunpowerHorizontal, int dayOfYear) {
 		double delta = 23.45 * Math.sin((360 / 365) * (284 + dayOfYear));
@@ -105,7 +105,7 @@ public class PhotovoltaicPanel extends Supplier {
 	 * @param temperatureInCelsius in degree Celsius
 	 * @param sunpowerHorizontal
 	 * @param dayOfYear as Integer
-	 * @return
+	 * @return energy generated in W
 	 */
 	public double computeEnergyGenerated(double temperatureInCelsius, double sunpowerHorizontal, int dayOfYear) {
 		return getModuleArea() * getMaximumPowerYield() * computePerformanceRatio(temperatureInCelsius)
