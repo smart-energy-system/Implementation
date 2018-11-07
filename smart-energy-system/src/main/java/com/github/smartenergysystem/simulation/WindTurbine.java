@@ -42,6 +42,12 @@ public class WindTurbine extends PositionEntity {
 		return this.efficiency;
 	}
 
+	/**
+	 * Calculates the area swept for a given bladeradius
+	 * 
+	 * @param bladeRadius in meters
+	 * @return areaswept in squaremeters
+	 */
 	public double computeAreaSwept(double bladeRadius) {
 		return bladeRadius * bladeRadius * Math.PI;
 	}
@@ -49,7 +55,7 @@ public class WindTurbine extends PositionEntity {
 	/**
 	 * Calculates the saturated vapor pressure. It uses the Herman Wobus equation.
 	 * 
-	 * @param temperatureInCelsius
+	 * @param temperatureInCelsius in degrees Celsius
 	 * @return the saturated vapor pressure measured in pascal
 	 */
 	public double computeSaturatedVaporPressure(double temperatureInCelsius) { // E_s
@@ -63,23 +69,41 @@ public class WindTurbine extends PositionEntity {
 	/**
 	 * Calculates vapor pressure. Solves A2.3
 	 * 
-	 * @param relativeHumidity
-	 * @param temperature
-	 * @return
+	 * @param relativeHumidity as double for example: 0.13
+	 * @param temperature in degrees Celsius
+	 * @return actual vapor pressure in pascal
 	 */
 	private double computeActualVaporPressure(double relativeHumidity, double temperature) {// P_v
 		return relativeHumidity * computeSaturatedVaporPressure(temperature);// * CONVERT_hPA_TO_PA;
 	}
 
+	/**
+	 * 
+	 * @param meassuredAirPressure in pascal
+	 * @param actualVaporPressure in pascal
+	 * @return pressure of the dry component of air in pascal
+	 */
 	private double computeDryAirPressure(double meassuredAirPressure, double actualVaporPressure) {
 		double pressureDryAir = meassuredAirPressure - actualVaporPressure;
 		return pressureDryAir;
 	}
 
+	/**
+	 * 
+	 * @param temperatureInKelvin in degrees Kelvin
+	 * @param dryPressure in pascal
+	 * @return density of dry air in kg/(m^3)
+	 */
 	private double computeDryAirDensity(double temperatureInKelvin, double dryPressure) {
 		return (dryPressure / (GAS_CONSTANT_DRY_AIR * temperatureInKelvin));
 	}
 
+	/**
+	 * 
+	 * @param temperatureInKelvin in degrees Kelvin
+	 * @param vaporPressure in pascal
+	 * @return density of water vapor in kg/(m^3)
+	 */
 	private double computeWaterVaporDensity(double temperatureInKelvin, double vaporPressure) {
 		return (vaporPressure / (GAS_CONSTANT_WATER_VAPOR * temperatureInKelvin));
 	}
@@ -87,10 +111,10 @@ public class WindTurbine extends PositionEntity {
 	/**
 	 * Calculates the density of moist air. Solves A2.4.
 	 * 
-	 * @param temperatureInKelvin
-	 * @param airPressure         in pascal
-	 * @param relativeHumidity
-	 * @return
+	 * @param temperatureInKelvin in degrees Kelvin
+	 * @param airPressure in pascal
+	 * @param relativeHumidity in percentage as a double for example 10%: 0.1
+	 * @return moist air density in kg/(m^3)
 	 */
 	public double computeMoistAirDensity(double temperatureInCelsius, double meassuredAirPressureInPascal,
 			double relativeHumidity) {
