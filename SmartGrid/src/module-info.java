@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author zilchms
- *
- */
-module smartGrid {
-}
