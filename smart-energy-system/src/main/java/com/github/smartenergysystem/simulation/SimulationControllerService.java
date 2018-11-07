@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.github.smartenergysystem.model.EnergyForecast;
+import com.github.smartenergysystem.model.exeptions.IdNotFoundException;
+import com.github.smartenergysystem.model.exeptions.NoWeatherDataFoundException;
 import com.github.smartenergysystem.weather.WeatherForecast;
 import com.github.smartenergysystem.weather.WeatherHistory;
 import com.github.smartenergysystem.weather.WeatherRepository;
@@ -102,13 +104,19 @@ public class SimulationControllerService implements ISimulationControllerService
 	public double computeEnergyGeneratedWindTurbine(Long id) {
 		if (windTurbines.containsKey(id)) {
 			WindTurbine windTurbine = windTurbines.get(id);
+			logger.debug("Requesting most recent weather data for wind turbine " + id);
 			WeatherHistory weatherHistory = weatherForecastRepository
 					.findFirstByLatitudeAndLongitudeOrderByTimestampDesc(windTurbine.getLatitude(),
 							windTurbine.getLongitude());
-			double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
-					weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(),
-					weatherHistory.getTemperature());
-			return energy;
+			if (weatherHistory != null) {
+				logger.debug("Most recent data is from:" + weatherHistory.getTimestamp());
+				double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
+						weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(),
+						weatherHistory.getTemperature());
+				return energy;
+			} else {
+				throw new NoWeatherDataFoundException();
+			}
 		} else {
 			throw new IdNotFoundException();
 		}
@@ -143,9 +151,10 @@ public class SimulationControllerService implements ISimulationControllerService
 				});
 				energyForecast.setForecast(energyforecastList);
 				return energyForecast;
+			}else {
+				logger.debug("Got none forecasts");
+				throw new NoWeatherDataFoundException();
 			}
-			logger.debug("Got none forecasts");
-			return null;
 		} else {
 			throw new IdNotFoundException();
 		}

@@ -1,8 +1,6 @@
 package com.github.smartenergysystem;
 
-import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -20,7 +18,6 @@ import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.model.WindTurbineEnergyComputationInput;
 import com.github.smartenergysystem.model.WindTurbineWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
-import com.github.smartenergysystem.simulation.SimulationControllerService;
 import com.github.smartenergysystem.simulation.WindTurbine;
 
 import io.swagger.annotations.Api;
