@@ -2,14 +2,16 @@ package com.github.smartenergysystem.simulation;
 
 public abstract class Consumer {
 	
-	double floorAreaSize;
-	double averageDailyOccupancy;
+	private double[] hourlyBaseDemandPerSquareMeter;
+	private double floorAreaSize;
+	private double averageDailyOccupancy;
 	
 	public Consumer(double floorAreaSize, double averageDailyOccupancy) {
 		super();
 		this.floorAreaSize = floorAreaSize;
 		this.averageDailyOccupancy = averageDailyOccupancy;
 	}
+	
 	public double getFloorAreaSize() {
 		return floorAreaSize;
 	}
@@ -23,6 +25,18 @@ public abstract class Consumer {
 		this.averageDailyOccupancy = averageDailyOccupancy;
 	}
 	
+	public double[] getHourlyBaseDemandPerSquareMeter() {
+		return hourlyBaseDemandPerSquareMeter;
+	}
+	
+	public double getBaseDemandPerSquareMeterForHour(int hourOfTheDay) {
+		return hourlyBaseDemandPerSquareMeter[hourOfTheDay];
+	}
+
+	public void setHourlyBaseDemandPerSquareMeter(double[] hourlyBaseDemandPerSquareMeter) {
+		this.hourlyBaseDemandPerSquareMeter = hourlyBaseDemandPerSquareMeter;
+	}
+
 	public abstract double calculateDemand(int hourOfTheDay);
 	
 	
