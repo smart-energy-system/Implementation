@@ -12,6 +12,9 @@ public class Consumer{
 	@ApiModelProperty(required = true, example = "1")
 	private double averageDailyOccupancy;
 	
+	@ApiModelProperty(required = true, example = "0")
+	private double demandFlexibility;
+	
 	public Consumer() {};
 	
 	public Consumer(double floorAreaSize, double averageDailyOccupancy) {
@@ -20,6 +23,14 @@ public class Consumer{
 		this.averageDailyOccupancy = averageDailyOccupancy;
 	}
 	
+	public double getDemandFlexibility() {
+		return demandFlexibility;
+	}
+
+	public void setDemandFlexibility(double demandFlexibility) {
+		this.demandFlexibility = demandFlexibility;
+	}
+
 	public double getFloorAreaSize() {
 		return floorAreaSize;
 	}

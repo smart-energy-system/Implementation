@@ -139,7 +139,7 @@ public class WindTurbine extends PositionEntity {
 
 	// P_avail = 1/2*p*A*v^3*C_p
 	/**
-	 * 
+	 * Solves A2.5
 	 * @param windSpeed in m/s
 	 * @param meassuredAirPressureInPascal in pascal
 	 * @param relativeHumidity as double
