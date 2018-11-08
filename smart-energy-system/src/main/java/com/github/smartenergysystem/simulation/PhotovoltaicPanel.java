@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class PhotovoltaicPanel extends PositionEntity {
 	
+	private static final int CONVERT_W_TO_KW = 1000;
+
 	/**
 	 * Accounts for all constant losses like cable loss
 	 */
@@ -14,20 +16,16 @@ public class PhotovoltaicPanel extends PositionEntity {
 
 	Logger logger = LoggerFactory.getLogger(PhotovoltaicPanel.class);
 	
-	public static final double PERFORMANCE_RATIO_DEFAULT = 0.75;
-	@ApiModelProperty(required = false, example = "0.75")
-	private double performanceRatio = PERFORMANCE_RATIO_DEFAULT;
-	@ApiModelProperty(required = true, example = "1")
+	@ApiModelProperty(required = true, example = "1.3")
 	private double moduleArea;
-	@ApiModelProperty(required = true, example = "260")
+	@ApiModelProperty(value = "Measured in Watt",required = true, example = "260")
 	private double maximumPowerYield;
 	@ApiModelProperty(required = true, example = "0.3")
 	private double tiltAngle;
 
-	public PhotovoltaicPanel(double performanceRatio, double moduleArea, double maximumPowerYield, double tiltAngle,
+	public PhotovoltaicPanel(double moduleArea, double maximumPowerYield, double tiltAngle,
 			double latitude, double longitude) {
 		super();
-		this.performanceRatio = performanceRatio;
 		this.moduleArea = moduleArea;
 		this.maximumPowerYield = maximumPowerYield;
 		this.tiltAngle = tiltAngle;
@@ -37,17 +35,6 @@ public class PhotovoltaicPanel extends PositionEntity {
 	public PhotovoltaicPanel() {
 	};
 
-	public double getPerformanceRatio() {
-		return performanceRatio;
-	}
-
-	public void setPerformanceRatio(double performanceRatio) {
-		if (performanceRatio > 0) {
-			this.performanceRatio = performanceRatio;
-		} else {
-			performanceRatio = PERFORMANCE_RATIO_DEFAULT;
-		}
-	}
 
 	public double getTiltAngle() {
 		return tiltAngle;
@@ -79,6 +66,11 @@ public class PhotovoltaicPanel extends PositionEntity {
 
 	public void setMaximumPowerYield(double maximumPowerYield) {
 		this.maximumPowerYield = maximumPowerYield;
+	}
+	
+	@ApiModelProperty(hidden=true)
+	public double getSolarPanelYield() {
+		return maximumPowerYield/CONVERT_W_TO_KW/moduleArea;
 	}
 	
 	/**
@@ -122,7 +114,7 @@ public class PhotovoltaicPanel extends PositionEntity {
 		logger.debug("Calculate energy for a photovoltaic panel  with temperatureInCelsius:" + temperatureInCelsius
 				+ " sunpowerHorizontal:" + sunpowerHorizontal + " dayOfYear:" + dayOfYear);
 		double performanceRatio = 1 - computeTotalLosses(temperatureInCelsius);
-		return getModuleArea() * getMaximumPowerYield() * performanceRatio
+		return getModuleArea() * getSolarPanelYield() * performanceRatio
 				* computeSolarRadiationIncident(sunpowerHorizontal, dayOfYear);
 	}
 

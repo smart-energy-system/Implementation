@@ -28,14 +28,15 @@ public class WeatherData extends PositionEntity {
 	@Column(name = "timestamp")
 	private long timestamp;
 	
-	@Column(name = "solarradiation")
-	private double solarRadiation;
+	@Column(name = "ghi")
+	private double globalHorizontalSolarIrradiance;
+
 	
-	public double getSolarRadiation() {
-		return solarRadiation;
+	public double getGlobalHorizontalSolarIrradiance() {
+		return globalHorizontalSolarIrradiance;
 	}
-	public void setSolarRadiation(double solarRadiation) {
-		this.solarRadiation = solarRadiation;
+	public void setGlobalHorizontalSolarIrradiance(double globalHorizontalSolarIrradiance) {
+		this.globalHorizontalSolarIrradiance = globalHorizontalSolarIrradiance;
 	}
 	public String getId() {
 		return id;

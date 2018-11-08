@@ -100,9 +100,9 @@ public class SimulationControllerService implements ISimulationControllerService
 		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
 		int dayOfTheYear = getDayOfTheYear(weatherHistory.getTimestamp());
 		logger.debug("Calculating photovoltaic panel energy for temp:" + weatherHistory.getTemperature() + " sunpower:"
-				+ weatherHistory.getSolarRadiation() + " dayOfTheYear:" + dayOfTheYear);
+				+ weatherHistory.getGlobalHorizontalSolarIrradiance() + " dayOfTheYear:" + dayOfTheYear);
 		double energy = photovoltaicPanel.computeEnergyGenerated(weatherHistory.getTemperature(),
-				weatherHistory.getSolarRadiation(), dayOfTheYear);
+				weatherHistory.getGlobalHorizontalSolarIrradiance(), dayOfTheYear);
 		logger.debug("Result:" + energy);
 		return energy;
 
@@ -150,7 +150,7 @@ public class SimulationControllerService implements ISimulationControllerService
 		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
 		weatherForecastList.forEach(weatherforecast -> {
 			double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
-					weatherforecast.getSolarRadiation(), getDayOfTheYear(weatherforecast.getTimestamp()));
+					weatherforecast.getGlobalHorizontalSolarIrradiance(), getDayOfTheYear(weatherforecast.getTimestamp()));
 			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
 		});
 		EnergyForecast energyForecast = new EnergyForecast();
