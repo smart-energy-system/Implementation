@@ -1,10 +1,18 @@
 package com.github.smartenergysystem.simulation;
 
-public class Consumer {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModelProperty;
+
+public class Consumer{
 	
 	private double[] hourlyBaseDemandPerSquareMeter;
+	@ApiModelProperty(required = true, example = "10")
 	private double floorAreaSize;
+	@ApiModelProperty(required = true, example = "1")
 	private double averageDailyOccupancy;
+	
+	public Consumer() {};
 	
 	public Consumer(double floorAreaSize, double averageDailyOccupancy) {
 		super();
@@ -25,6 +33,8 @@ public class Consumer {
 		this.averageDailyOccupancy = averageDailyOccupancy;
 	}
 	
+	@JsonIgnore
+	@ApiModelProperty(hidden = true)
 	public double[] getHourlyBaseDemandPerSquareMeter() {
 		return hourlyBaseDemandPerSquareMeter;
 	}

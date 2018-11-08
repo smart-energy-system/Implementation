@@ -1,7 +1,6 @@
 package com.github.smartenergysystem.simulation;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +47,12 @@ public class SimulationControllerService implements ISimulationControllerService
 
 	Long batteryId = 0L;
 	HashMap<Long, Battery> batteries = new HashMap<>();
+
+	Long officeBuildingId = 0L;
+	HashMap<Long, OfficeBuilding> officeBuildings = new HashMap<>();
+	
+	Long homeBuildingId = 0L;
+	HashMap<Long, Home> homeBuildings = new HashMap<>();
 
 	@Override
 	public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
@@ -209,41 +214,101 @@ public class SimulationControllerService implements ISimulationControllerService
 			throw new IdNotFoundException();
 		}
 	}
-	
+
 	private boolean isIdValid(Long id, Map<Long, ?> entities) {
 		if (entities.containsKey(id)) {
 			return true;
-		}else {
+		} else {
 			throw new IdNotFoundException();
 		}
 	}
 
 	@Override
-	public synchronized Battery addBattery(Battery battery) {
+	public synchronized Long addBattery(Battery battery) {
 		batteryId++;
 		batteries.put(batteryId, battery);
-		battery.setId(batteryId);
-		return battery;
+		return batteryId;
 	}
 
 	@Override
 	public synchronized Battery getBattery(Long id) {
-		isIdValid(id,batteries);
+		isIdValid(id, batteries);
 		return batteries.get(id);
 	}
 
 	@Override
-	public synchronized Collection<Battery> getBatterys() {
-		return batteries.values();
+	public synchronized Map<Long, Battery> getBatterys() {
+		return batteries;
 	}
 
 	@Override
 	public synchronized Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput) {
-		isIdValid(id,batteries);
+		isIdValid(id, batteries);
 		Battery battery = batteries.get(id);
-		double delta = battery.computeStoredEnergy(chargeProcessInput.getDischargingRate(), chargeProcessInput.getChargingRate(), chargeProcessInput.getChargingEfficiency());
-		battery.setStoredEnergy(battery.getStoredEnergy()-delta);
+		battery.computeStoredEnergy(chargeProcessInput.getDischargingRate(), chargeProcessInput.getChargingRate(),
+				chargeProcessInput.getChargingEfficiency());
 		return battery;
+	}
+
+	@Override
+	public synchronized Long addOfficeBuilding(OfficeBuilding officeBuilding) {
+		officeBuildingId++;
+		officeBuildings.put(officeBuildingId, officeBuilding);
+		return officeBuildingId;
+	}
+
+	@Override
+	public synchronized OfficeBuilding getOfficeBuilding(Long id) {
+		isIdValid(id, officeBuildings);
+		return officeBuildings.get(id);
+	}
+
+	@Override
+	public synchronized Map<Long, OfficeBuilding> getOfficeBuildings() {
+		return officeBuildings;
+	}
+
+	@Override
+	public synchronized double computeOfficeBuildingDemand(long id, int hourOfTheDay) {
+		isIdValid(id, officeBuildings);
+		return officeBuildings.get(id).calculateDemand(hourOfTheDay);
+	}
+
+	@Override
+	public synchronized void setOfficeBuildingsHourlyBaseDemandPerSquareMeter(long id,double[] hourlyBaseDemandPerSquareMeter) {
+		isIdValid(id, officeBuildings);
+		officeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
+	}
+
+	@Override
+	public synchronized Long addHomeBuilding(Home home) {
+		homeBuildingId++;
+		homeBuildings.put(homeBuildingId, home);
+		return homeBuildingId;
+	}
+
+	@Override
+	public synchronized Home getHomeBuilding(long id) {
+		isIdValid(id, homeBuildings);
+		return homeBuildings.get(id);
+	}
+
+	@Override
+	public synchronized Map<Long, Home> getHomeBuildings() {
+		// TODO Auto-generated method stub
+		return homeBuildings;
+	}
+
+	@Override
+	public synchronized double computeHomeBuildingDemand(long id, int hourOfTheDay) {
+		isIdValid(id, homeBuildings);
+		return homeBuildings.get(id).calculateDemand(hourOfTheDay);
+	}
+
+	@Override
+	public synchronized void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter) {
+		isIdValid(id, homeBuildings);
+		homeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
 	}
 
 }

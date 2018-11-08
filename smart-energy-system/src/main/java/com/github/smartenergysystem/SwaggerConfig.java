@@ -16,6 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
 
 	public static final String SUPPLIER_TAG_NAME = "Supplier";
+	public static final String CONSUMER_TAG_NAME = "Consumer";
 
 	@Bean
 	public Docket produceApi() {

@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Battery {
 
-	private Long id;
-	
 	@ApiModelProperty(required = true, example = "10")
 	private double maximumStoredEnergy;
 	@ApiModelProperty(required = true, example = "5")
@@ -26,27 +24,15 @@ public class Battery {
 		return deltaE;
 	}
 
-	@ApiModelProperty(hidden=true)
-	public Long getId() {
-		return id;
-	}
-
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-
 	public double getStoredEnergy() {
 		return storedEnergy;
 	}
-
 
 	public void setStoredEnergy(double storedEnergy) {
 		this.storedEnergy = storedEnergy;
 	}
 
-	public double getMaximumPossibleCharge() {
+	private double getMaximumPossibleCharge() {
 		return maximumStoredEnergy - storedEnergy;
 	}
 

@@ -1,8 +1,9 @@
 package com.github.smartenergysystem;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.smartenergysystem.model.BatteryWithIdDTO;
 import com.github.smartenergysystem.model.ChargeProcessInput;
 import com.github.smartenergysystem.simulation.Battery;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
+import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
+
 import io.swagger.annotations.Api;
 
 @RestController
@@ -25,8 +29,12 @@ public class SupplierBatterySimulationController {
 	ISimulationControllerService simulationControllerService;
 	
 	@PostMapping("/batteries")
-	public Battery addBattery(@RequestBody Battery battery) {
-		return simulationControllerService.addBattery(battery);
+	public BatteryWithIdDTO addBattery(@RequestBody Battery battery) {
+		Long id = simulationControllerService.addBattery(battery);
+		BatteryWithIdDTO batteryWithIdDTO = new BatteryWithIdDTO();
+		BeanUtils.copyProperties(battery, batteryWithIdDTO);
+		batteryWithIdDTO.setId(id);
+		return batteryWithIdDTO;
 	}
 	
 	@GetMapping("/batteries/{id}")
@@ -35,7 +43,7 @@ public class SupplierBatterySimulationController {
 	}
 	
 	@GetMapping("/batteries")
-	public Collection<Battery> getBatterys() {
+	public Map<Long,Battery> getBatterys() {
 		return simulationControllerService.getBatterys();	
 	}
 	

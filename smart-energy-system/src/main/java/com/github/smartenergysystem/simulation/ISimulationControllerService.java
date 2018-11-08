@@ -1,7 +1,4 @@
 package com.github.smartenergysystem.simulation;
-
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.model.ChargeProcessInput;
@@ -20,8 +17,21 @@ public interface ISimulationControllerService {
 	public double computeEnergyGeneratedWindTurbine(Long id);
 	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset);
 	
-	public Battery addBattery(Battery battery);
+	public Long addBattery(Battery battery);
 	public Battery getBattery(Long id);
-	public Collection<Battery> getBatterys();
+	public Map<Long,Battery> getBatterys();
 	public Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput);
+	
+	public Long addOfficeBuilding(OfficeBuilding officeBuilding);
+	public OfficeBuilding getOfficeBuilding(Long id);
+	public Map<Long,OfficeBuilding> getOfficeBuildings();
+	public double computeOfficeBuildingDemand(long id, int hourOfTheDay);
+	public void setOfficeBuildingsHourlyBaseDemandPerSquareMeter(long id,double[] hourlyBaseDemandPerSquareMeter);
+	
+	public Long addHomeBuilding(Home home);
+	public Home getHomeBuilding(long id);
+	public Map<Long, Home> getHomeBuildings();
+	public double computeHomeBuildingDemand(long id, int hourOfTheDay);
+	public void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter);
+	
 }
