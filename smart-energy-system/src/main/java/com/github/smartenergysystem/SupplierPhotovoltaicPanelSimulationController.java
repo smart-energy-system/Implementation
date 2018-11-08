@@ -44,7 +44,7 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}")
-	public PositionEntity getPhotovoltaicPanel(@PathVariable("id") long id) {
+	public PhotovoltaicPanel getPhotovoltaicPanel(@PathVariable("id") long id) {
 		return simulationControllerService.getPhotovoltaicPanel(id);		
 	}
 

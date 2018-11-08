@@ -1,6 +1,7 @@
 package com.github.smartenergysystem.simulation;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.github.smartenergysystem.model.ChargeProcessInput;
 import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.model.exeptions.IdNotFoundException;
 import com.github.smartenergysystem.model.exeptions.NoWeatherDataFoundException;
@@ -43,6 +46,9 @@ public class SimulationControllerService implements ISimulationControllerService
 	Long windTurbineId = 0L;
 	HashMap<Long, WindTurbine> windTurbines = new HashMap<>();
 
+	Long batteryId = 0L;
+	HashMap<Long, Battery> batteries = new HashMap<>();
+
 	@Override
 	public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
 		WeatherResponse weatherResponse = registerForWeatherData(photovoltaicPanel.getLatitude(),
@@ -57,19 +63,19 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
+	public synchronized PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
 		return photovoltaicPanels.get(panelId);
 	}
 
 	@Override
-	public Long addWindTurbine(WindTurbine windTurbine) {
+	public synchronized Long addWindTurbine(WindTurbine windTurbine) {
 		registerForWeatherData(windTurbine.getLatitude(), windTurbine.getLongitude());
 		windTurbineId++;
 		getWindTurbines().put(windTurbineId, windTurbine);
 		return windTurbineId;
 	}
 
-	private WeatherResponse registerForWeatherData(double latitude, double longitude) {
+	private synchronized WeatherResponse registerForWeatherData(double latitude, double longitude) {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.set("Content-Type", "application/json");
 		RestTemplate restTemplate = new RestTemplate();
@@ -81,12 +87,12 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public Map<Long, WindTurbine> getWindTurbines() {
+	public synchronized Map<Long, WindTurbine> getWindTurbines() {
 		return windTurbines;
 	}
 
 	@Override
-	public WindTurbine getWindTurbine(Long turbineId) {
+	public synchronized WindTurbine getWindTurbine(Long turbineId) {
 		if (windTurbines.containsKey(turbineId)) {
 			return windTurbines.get(turbineId);
 		} else {
@@ -95,7 +101,7 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
+	public synchronized double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
 		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(panelId, photovoltaicPanels);
 		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
 		int dayOfTheYear = getDayOfTheYear(weatherHistory.getTimestamp());
@@ -109,7 +115,7 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public double computeEnergyGeneratedWindTurbine(Long id) {
+	public synchronized double computeEnergyGeneratedWindTurbine(Long id) {
 		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(id, windTurbines);
 		WindTurbine windTurbine = windTurbines.get(id);
 		double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
@@ -117,7 +123,7 @@ public class SimulationControllerService implements ISimulationControllerService
 		return energy;
 	}
 
-	private WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
+	private synchronized WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
 			HashMap<Long, ? extends PositionEntity> entityList) {
 		if (entityList.containsKey(id)) {
 			PositionEntity entity = entityList.get(id);
@@ -135,7 +141,7 @@ public class SimulationControllerService implements ISimulationControllerService
 		}
 	}
 
-	private int getDayOfTheYear(long timestamp) {
+	private synchronized int getDayOfTheYear(long timestamp) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(timestamp);
 		int dayOfTheYear = cal.get(Calendar.DAY_OF_YEAR);
@@ -143,14 +149,16 @@ public class SimulationControllerService implements ISimulationControllerService
 	}
 
 	@Override
-	public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id, long maxTimestampOffset) {
+	public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
+			long maxTimestampOffset) {
 		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
 				photovoltaicPanels);
 		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
 		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
 		weatherForecastList.forEach(weatherforecast -> {
 			double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
-					weatherforecast.getGlobalHorizontalSolarIrradiance(), getDayOfTheYear(weatherforecast.getTimestamp()));
+					weatherforecast.getGlobalHorizontalSolarIrradiance(),
+					getDayOfTheYear(weatherforecast.getTimestamp()));
 			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
 		});
 		EnergyForecast energyForecast = new EnergyForecast();
@@ -164,7 +172,7 @@ public class SimulationControllerService implements ISimulationControllerService
 	 * Solves A2.5
 	 */
 	@Override
-	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
+	public synchronized EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
 		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset, windTurbines);
 		logger.debug("Got " + weatherForecastList.size() + " forecasts");
 		WindTurbine windTurbine = windTurbines.get(id);
@@ -183,7 +191,7 @@ public class SimulationControllerService implements ISimulationControllerService
 		return energyForecast;
 	}
 
-	private List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
+	private synchronized List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
 			HashMap<Long, ? extends PositionEntity> entityList) {
 		if (entityList.containsKey(id)) {
 			PositionEntity entity = entityList.get(id);
@@ -200,6 +208,42 @@ public class SimulationControllerService implements ISimulationControllerService
 		} else {
 			throw new IdNotFoundException();
 		}
+	}
+	
+	private boolean isIdValid(Long id, Map<Long, ?> entities) {
+		if (entities.containsKey(id)) {
+			return true;
+		}else {
+			throw new IdNotFoundException();
+		}
+	}
+
+	@Override
+	public synchronized Battery addBattery(Battery battery) {
+		batteryId++;
+		batteries.put(batteryId, battery);
+		battery.setId(batteryId);
+		return battery;
+	}
+
+	@Override
+	public synchronized Battery getBattery(Long id) {
+		isIdValid(id,batteries);
+		return batteries.get(id);
+	}
+
+	@Override
+	public synchronized Collection<Battery> getBatterys() {
+		return batteries.values();
+	}
+
+	@Override
+	public synchronized Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput) {
+		isIdValid(id,batteries);
+		Battery battery = batteries.get(id);
+		double delta = battery.computeStoredEnergy(chargeProcessInput.getDischargingRate(), chargeProcessInput.getChargingRate(), chargeProcessInput.getChargingEfficiency());
+		battery.setStoredEnergy(battery.getStoredEnergy()-delta);
+		return battery;
 	}
 
 }

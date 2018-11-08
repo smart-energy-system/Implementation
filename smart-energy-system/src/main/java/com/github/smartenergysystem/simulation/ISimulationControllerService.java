@@ -1,7 +1,10 @@
 package com.github.smartenergysystem.simulation;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import com.github.smartenergysystem.model.ChargeProcessInput;
 import com.github.smartenergysystem.model.EnergyForecast;
 
 public interface ISimulationControllerService {
@@ -16,4 +19,9 @@ public interface ISimulationControllerService {
 	public WindTurbine getWindTurbine(Long turbineId);
 	public double computeEnergyGeneratedWindTurbine(Long id);
 	public EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset);
+	
+	public Battery addBattery(Battery battery);
+	public Battery getBattery(Long id);
+	public Collection<Battery> getBatterys();
+	public Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput);
 }
