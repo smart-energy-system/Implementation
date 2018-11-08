@@ -9,6 +9,7 @@ public class Battery {
   public double computeStoredEnergy(double dischargingRate, double chargingRate, double chargingEfficiency) {
 	  double tempstoredEnergy = this.storedEnergy-Math.min(((Math.min(dischargingRate,getMaximumDischargingRate()))/chargingEfficiency),storedEnergy)+Math.min((Math.min(chargingRate,getMaximumChargingRate())/chargingEfficiency),getMaximumPossibleCharge());
 	  double deltaE = tempstoredEnergy - this.storedEnergy;
+	  this.storedEnergy = tempstoredEnergy;
 	  return deltaE;
   }
   
