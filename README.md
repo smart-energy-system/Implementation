@@ -1,6 +1,6 @@
 # Implementation
 
-This repository contains the implementation of a microgrid simulation.
+This repository contains the implementation of a microgrid simulation. We usually add the exercise number to the methods.
 
 # Setup
 It is probably possible to use a lot of different IDEs and setting but we used the following:
