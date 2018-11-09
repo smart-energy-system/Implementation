@@ -153,6 +153,9 @@ public class SimulationControllerService implements ISimulationControllerService
 		return dayOfTheYear;
 	}
 
+	/**
+	 * Solves A2.9
+	 */
 	@Override
 	public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
 			long maxTimestampOffset) {

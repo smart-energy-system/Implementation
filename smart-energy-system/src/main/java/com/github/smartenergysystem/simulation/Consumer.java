@@ -59,7 +59,7 @@ public class Consumer{
 	}
 
 	/**
-	 * 
+	 * Solves A2.11
 	 * @param hourOfTheDay
 	 * @return the demand in kWh
 	 */

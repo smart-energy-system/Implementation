@@ -13,6 +13,13 @@ public class Battery {
 	@ApiModelProperty(required = true, example = "0")
 	private double storedEnergy;
 
+	/**
+	 * Solves A2.10
+	 * @param dischargingRate
+	 * @param chargingRate
+	 * @param chargingEfficiency
+	 * @return
+	 */
 	public double computeStoredEnergy(double dischargingRate, double chargingRate, double chargingEfficiency) {
 		double tempstoredEnergy = this.storedEnergy
 				- Math.min(((Math.min(dischargingRate, getMaximumDischargingRate())) / chargingEfficiency),

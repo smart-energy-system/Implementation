@@ -49,7 +49,7 @@ public class WindTurbine extends PositionEntity {
 	}
 
 	/**
-	 * Calculates the area swept for a given bladeradius
+	 * Calculates the area swept for a given bladeradius. Solves A2.2
 	 * 
 	 * @param bladeRadius in meters
 	 * @return areaswept in squaremeters
