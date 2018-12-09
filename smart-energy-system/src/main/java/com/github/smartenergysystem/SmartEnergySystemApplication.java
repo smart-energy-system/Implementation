@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SmartEnergySystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SmartEnergySystemApplication.class, args);
+		//SpringApplication.run(SmartEnergySystemApplication.class, args);
 		Model m = new Model("my first problem");
 
 		IntVar[] buy = { m.intVar("buy", 0, 100000), m.intVar("buy", 0, 100000), m.intVar("buy", 0, 100000) };
@@ -34,6 +34,11 @@ public class SmartEnergySystemApplication {
 				m.intVar("right2", 0, 100000) };
 		IntVar[] left = { m.intVar("left", 0, 100000), m.intVar("left", 0, 100000), m.intVar("left", 0, 100000) };
 		IntVar[] right = { m.intVar("right", 0, 100000), m.intVar("right", 0, 100000), m.intVar("right", 0, 100000) };
+		//IntVar[] batteryEfficiency = { m.intVar("right", 1), m.intVar("right", 1), m.intVar("right", 1) };
+		//IntVar[] realBatteryChargeRate = { m.intVar("right", 1), m.intVar("right", 1), m.intVar("right", 1) };
+		//InitBatteryCharge
+		IntVar initBatteryCharge = m.intVar("initBatteryCharge", 0);
+
 		// Prices
 		IntVar[] price = { m.intVar("price", 1), m.intVar("price", 1), m.intVar("price", 1) };
 		IntVar[] cost = { m.intVar("cost", 1), m.intVar("cost", 1), m.intVar("cost", 1) };
@@ -47,7 +52,7 @@ public class SmartEnergySystemApplication {
 		IntVar[] loss = { m.intVar("loss", 0, 100000), m.intVar("loss", 0, 100000), m.intVar("loss", 0, 100000) };
 
 		// sum result
-		IntVar sum = m.intVar("sum", 0, 100000);
+		IntVar sum = m.intVar("sum", -100000, 100000);
 
 		for (int i = 0; i < 3; i++) {
 			m.arithm(left1[i], "=", buy[i], "+", solar[i]).post();
@@ -58,31 +63,44 @@ public class SmartEnergySystemApplication {
 			m.arithm(right[i], "=", right1[i], "+", right2[i]).post();
 			m.arithm(left[i], "=", right[i]).post();
 			// profit and loss
-
 			m.arithm(profit[i], "=", sell[i], "*", price[i]).post();
 			m.arithm(loss[i], "=", buy[i], "*", cost[i]).post();
 			// // balance
 			m.arithm(balance[i], "=", profit[i], "-", loss[i]).post();
 
-			m.or(m.and(m.or(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">", 0)),
-					m.not(m.and(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">", 0)))),
-					m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryChargeRate[i], "=", 0))).post();
+			//m.or(m.and(m.or(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">=", 0)),
+			//		m.not(m.and(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">", 0)))),
+			//		m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryChargeRate[i], "=", 0))).post();
+
+			//m.or(m.and(m.arithm(batteryChargeRate[i], ">", 0),m.arithm(batteryDischargeRate[i], "=", 0)),
+			//m.or(m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], ">", 0)),
+			//	m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], "=", 0)))).post();
+
+			//m.or(m.and(m.arithm(batteryChargeRate[i], ">=", 0), m.arithm(batteryDischargeRate[i], "=", 0)),
+			//	m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], ">=", 0))
+			//		).post();
+			
+			m.ifThenElse(m.arithm(batteryBalance[i], ">=", 0),m.arithm(batteryDischargeRate[i], "=", 0),m.arithm(batteryChargeRate[i],"=",0));
+			//m.ifThen(m.arithm(batteryBalance[i], "<=", 0), m.arithm(batteryChargeRate[i], "=" , 0))
+			
+			m.arithm(batteryBalance[i], "=", batteryChargeRate[i], "-", batteryDischargeRate[i]).post();
 		}
 
 		for (int i = 1; i < 3; i++) {
 			m.arithm(batteryCharge[i], "=", batteryCharge[i - 1], "+", batteryBalance[i]).post();
-			m.arithm(batteryBalance[i], "=", batteryChargeRate[i], "-", batteryDischargeRate[i]).post();
-
 		}
+		
+		m.arithm(batteryCharge[0], "=", initBatteryCharge , "+", batteryBalance[0]).post();
 
 		m.sum(balance, "=", sum).post();
 		m.setObjective(Model.MAXIMIZE, sum);
 
 		Solver solver = m.getSolver();
 
-		Solution solution = new Solution(m);
+		//Solution solution = new Solution(m);
 		while (solver.solve()) {
-			solution.record();
+
+			//solution.record();
 
 			System.out.println(sum);
 
