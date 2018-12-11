@@ -32,6 +32,9 @@ public class SmartEnergySystemApplication {
 		IntVar[] left2 = { m.intVar("left2", 0, 100000), m.intVar("left2", 0, 100000), m.intVar("left2", 0, 100000) };
 		IntVar[] right2 = { m.intVar("right2", 0, 100000), m.intVar("right2", 0, 100000),
 				m.intVar("right2", 0, 100000) };
+		IntVar[] left3 = { m.intVar("left3", 0, 100000), m.intVar("left3", 0, 100000), m.intVar("left3", 0, 100000) };
+		IntVar[] right3 = { m.intVar("right3", 0, 100000), m.intVar("right3", 0, 100000),
+				m.intVar("right3", 0, 100000) };
 		IntVar[] left = { m.intVar("left", 0, 100000), m.intVar("left", 0, 100000), m.intVar("left", 0, 100000) };
 		IntVar[] right = { m.intVar("right", 0, 100000), m.intVar("right", 0, 100000), m.intVar("right", 0, 100000) };
 		IntVar[] realBatteryChargeRate = { m.intVar("realChargeRate", 0, 100000), m.intVar("realChargeRate", 0, 100000), m.intVar("realChargeRate", 0, 100000) };
@@ -41,8 +44,8 @@ public class SmartEnergySystemApplication {
 		IntVar batteryEfficiencyCounter = m.intVar("bEfficiencyCounter", 90);
 		IntVar batteryEfficiencyDivisor= m.intVar("bEfficiencyDivisor", 100);
 		// Prices
-		IntVar[] price = { m.intVar("price", 2), m.intVar("price", 2), m.intVar("price", 1) };
-		IntVar[] cost = { m.intVar("cost", 10), m.intVar("cost", 10), m.intVar("cost", 1) };
+		IntVar[] price = { m.intVar("price", 1), m.intVar("price", 1), m.intVar("price", 1) };
+		IntVar[] cost = { m.intVar("cost", 1), m.intVar("cost", 1), m.intVar("cost", 1) };
 		IntVar[] balance = { m.intVar("balance", -100000, 100000), m.intVar("balance", -100000, 100000),
 				m.intVar("balance", -100000, 100000) };
 		IntVar[] batteryBalance = { m.intVar("batteryBalance", -100000, 100000),
@@ -52,16 +55,30 @@ public class SmartEnergySystemApplication {
 				m.intVar("profit", 0, 100000) };
 		IntVar[] loss = { m.intVar("loss", 0, 100000), m.intVar("loss", 0, 100000), m.intVar("loss", 0, 100000) };
 
+		//Demand shifting
+		IntVar[] demandDecrease = { m.intVar("demandDecrease", 0 ,100000),m.intVar("demandDecrease", 0 ,100000),m.intVar("demandDecrease", 0 ,100000)};
+		IntVar[] demandIncrease = { m.intVar("demandIncrease", 0 ,100000),m.intVar("demandIncrease", 0 ,100000),m.intVar("demandIncrease", 0 ,100000)};
+		
 		// sum result
 		IntVar sum = m.intVar("sum", -100000, 100000);
-
+		IntVar demandIncreaseSum = m.intVar("demandIncreaseSum", 0, 100000);
+		IntVar demandDecreaseSum = m.intVar("demandDecreaseSum", 0, 100000);
+		IntVar[] shiftDecreaseBool = { m.intVar("shiftDecreaseBool", 0, 1),m.intVar("shiftDecreaseBool", 0, 1),m.intVar("shiftDecreaseBool", 0, 1)};
+		IntVar[] shiftIncreaseBool = { m.intVar("shiftIncreaseBool", 0, 1),m.intVar("shiftIncreaseBool", 0, 1),m.intVar("shiftIncreaseBool", 0, 1)};
+		IntVar[] demandShiftRate = { m.intVar("demandIncrease", 0 ,100000),m.intVar("demandIncrease", 0 ,100000),m.intVar("demandIncrease", 0 ,100000)};
+		IntVar demandShiftCounter = m.intVar("sum", 0, 100000);
+		IntVar demandShiftDivisor = m.intVar("sum", 0, 100000);
+		
+		
 		for (int i = 0; i < 3; i++) {
 			m.arithm(left1[i], "=", buy[i], "+", solar[i]).post();
 			m.arithm(right1[i], "=", sell[i], "+", home[i]).post();
 			m.arithm(left2[i], "=", batteryDischargeRate[i], "+", wind[i]).post();
 			m.arithm(right2[i], "=", batteryChargeRate[i], "+", commercial[i]).post();
-			m.arithm(left[i], "=", left1[i], "+", left2[i]).post();
-			m.arithm(right[i], "=", right1[i], "+", right2[i]).post();
+			m.arithm(left3[i], "=", left2[i], "+", demandDecrease[i]).post();
+			m.arithm(right3[i], "=", right2[i], "+", demandIncrease[i]).post();
+			m.arithm(left[i], "=", left1[i], "+", left3[i]).post();
+			m.arithm(right[i], "=", right1[i], "+", right3[i]).post();
 			m.arithm(left[i], "=", right[i]).post();
 			// profit and loss
 			m.arithm(profit[i], "=", sell[i], "*", price[i]).post();
@@ -79,6 +96,17 @@ public class SmartEnergySystemApplication {
 			m.arithm(batteryEfficiencyRate[i], "=", batteryChargeRate[i] ,"*", batteryEfficiencyCounter).post();
 			m.arithm(realBatteryChargeRate[i], "=", batteryEfficiencyRate[i], "/", batteryEfficiencyDivisor ).post();
 			m.arithm(batteryBalance[i], "=", realBatteryChargeRate[i], "-", batteryDischargeRate[i]).post();
+			
+			//Increase decrease shift regulation
+			m.ifThen(m.arithm(demandIncrease[i],  ">", 0), m.arithm(demandDecrease[i], "=", 0));
+			m.ifThen(m.arithm(demandDecrease[i], ">", 0),m.arithm(demandIncrease[i], "=", 0));
+			m.ifThen(m.arithm(shiftIncreaseBool[i],  ">", 0), m.arithm(shiftDecreaseBool[i], "=", 1));
+			m.ifThen(m.arithm(shiftDecreaseBool[i], ">", 0),m.arithm(shiftIncreaseBool[i], "=", 1));
+			m.arithm(demandDecrease[i], "<=", home[i]).post();
+			
+			//Demand Shift Rate
+			m.arithm(demandDecrease[i], "<", demandShiftRate[i], "/", demandShiftDivisor).post();
+			m.arithm(demandShiftRate[i], "=", home[i] , "*", demandShiftCounter).post();
 		}
 
 		for (int i = 1; i < 3; i++) {
@@ -87,6 +115,13 @@ public class SmartEnergySystemApplication {
 		
 		m.arithm(batteryCharge[0], "=", initBatteryCharge , "+", batteryBalance[0]).post();
 
+		m.sum(demandIncrease, "=" ,demandIncreaseSum).post();
+		m.sum(demandDecrease, "=" ,demandDecreaseSum).post();;
+		m.arithm(demandDecreaseSum, "=", demandIncreaseSum).post();
+
+		m.sum(shiftIncreaseBool, "<=", 1).post();;
+		m.sum(shiftDecreaseBool, "<=", 1).post();;
+		
 		m.sum(balance, "=", sum).post();
 		m.setObjective(Model.MAXIMIZE, sum);
 
@@ -105,6 +140,10 @@ public class SmartEnergySystemApplication {
 				System.out.print(home[i]);
 				System.out.print(", ");
 				System.out.print(commercial[i]);
+				System.out.print(", ");
+				System.out.print(demandIncrease[i]);
+				System.out.print(", ");
+				System.out.print(demandDecrease[i]);
 				System.out.print(", ");
 				System.out.print(solar[i]);
 				System.out.print(", ");
