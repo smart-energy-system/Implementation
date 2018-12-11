@@ -34,14 +34,15 @@ public class SmartEnergySystemApplication {
 				m.intVar("right2", 0, 100000) };
 		IntVar[] left = { m.intVar("left", 0, 100000), m.intVar("left", 0, 100000), m.intVar("left", 0, 100000) };
 		IntVar[] right = { m.intVar("right", 0, 100000), m.intVar("right", 0, 100000), m.intVar("right", 0, 100000) };
-		//IntVar[] batteryEfficiency = { m.intVar("right", 1), m.intVar("right", 1), m.intVar("right", 1) };
-		//IntVar[] realBatteryChargeRate = { m.intVar("right", 1), m.intVar("right", 1), m.intVar("right", 1) };
+		IntVar[] realBatteryChargeRate = { m.intVar("realChargeRate", 0, 100000), m.intVar("realChargeRate", 0, 100000), m.intVar("realChargeRate", 0, 100000) };
 		//InitBatteryCharge
 		IntVar initBatteryCharge = m.intVar("initBatteryCharge", 0);
-
+		IntVar[] batteryEfficiencyRate = { m.intVar("bEfficiencyRate", 0, 100000),m.intVar("bEfficiencyRate", 0, 100000),m.intVar("bEfficiencyRate", 0, 100000)};
+		IntVar batteryEfficiencyCounter = m.intVar("bEfficiencyCounter", 90);
+		IntVar batteryEfficiencyDivisor= m.intVar("bEfficiencyDivisor", 100);
 		// Prices
-		IntVar[] price = { m.intVar("price", 1), m.intVar("price", 1), m.intVar("price", 1) };
-		IntVar[] cost = { m.intVar("cost", 1), m.intVar("cost", 1), m.intVar("cost", 1) };
+		IntVar[] price = { m.intVar("price", 2), m.intVar("price", 2), m.intVar("price", 1) };
+		IntVar[] cost = { m.intVar("cost", 10), m.intVar("cost", 10), m.intVar("cost", 1) };
 		IntVar[] balance = { m.intVar("balance", -100000, 100000), m.intVar("balance", -100000, 100000),
 				m.intVar("balance", -100000, 100000) };
 		IntVar[] batteryBalance = { m.intVar("batteryBalance", -100000, 100000),
@@ -67,23 +68,17 @@ public class SmartEnergySystemApplication {
 			m.arithm(loss[i], "=", buy[i], "*", cost[i]).post();
 			// // balance
 			m.arithm(balance[i], "=", profit[i], "-", loss[i]).post();
-
-			//m.or(m.and(m.or(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">=", 0)),
-			//		m.not(m.and(m.arithm(batteryChargeRate[i], ">", 0), m.arithm(batteryDischargeRate[i], ">", 0)))),
-			//		m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryChargeRate[i], "=", 0))).post();
-
-			//m.or(m.and(m.arithm(batteryChargeRate[i], ">", 0),m.arithm(batteryDischargeRate[i], "=", 0)),
-			//m.or(m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], ">", 0)),
-			//	m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], "=", 0)))).post();
-
-			//m.or(m.and(m.arithm(batteryChargeRate[i], ">=", 0), m.arithm(batteryDischargeRate[i], "=", 0)),
-			//	m.and(m.arithm(batteryChargeRate[i], "=", 0), m.arithm(batteryDischargeRate[i], ">=", 0))
-			//		).post();
 			
-			m.ifThenElse(m.arithm(batteryBalance[i], ">=", 0),m.arithm(batteryDischargeRate[i], "=", 0),m.arithm(batteryChargeRate[i],"=",0));
-			//m.ifThen(m.arithm(batteryBalance[i], "<=", 0), m.arithm(batteryChargeRate[i], "=" , 0))
+			//Im- and Export regulation
+			m.ifThen(m.arithm(batteryChargeRate[i],  ">", 0), m.arithm(batteryDischargeRate[i], "=", 0));
+			m.ifThen(m.arithm(batteryDischargeRate[i], ">", 0),m.arithm(batteryChargeRate[i], "=", 0));
+			m.ifThen(m.arithm(buy[i],  ">", 0), m.arithm(sell[i], "=", 0));
+			m.ifThen(m.arithm(sell[i], ">", 0),m.arithm(buy[i], "=", 0));
 			
-			m.arithm(batteryBalance[i], "=", batteryChargeRate[i], "-", batteryDischargeRate[i]).post();
+			//BatteryCharging Inefficiency constraints
+			m.arithm(batteryEfficiencyRate[i], "=", batteryChargeRate[i] ,"*", batteryEfficiencyCounter).post();
+			m.arithm(realBatteryChargeRate[i], "=", batteryEfficiencyRate[i], "/", batteryEfficiencyDivisor ).post();
+			m.arithm(batteryBalance[i], "=", realBatteryChargeRate[i], "-", batteryDischargeRate[i]).post();
 		}
 
 		for (int i = 1; i < 3; i++) {
@@ -96,11 +91,12 @@ public class SmartEnergySystemApplication {
 		m.setObjective(Model.MAXIMIZE, sum);
 
 		Solver solver = m.getSolver();
-
-		//Solution solution = new Solution(m);
+		
+		long millisStart = System.currentTimeMillis();
+		Solution solution = new Solution(m);
 		while (solver.solve()) {
 
-			//solution.record();
+			solution.record();
 
 			System.out.println(sum);
 
@@ -135,5 +131,7 @@ public class SmartEnergySystemApplication {
 			}
 			System.out.println("-----------------------------------");
 		}
+		System.out.println("FINISH! FINNISH SAUNA!");
+		System.out.println("Time: " + (System.currentTimeMillis() - millisStart) / 1000);
 	}
 }
