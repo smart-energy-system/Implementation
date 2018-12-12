@@ -6,29 +6,70 @@ import org.chocosolver.solver.variables.IntVar;
 
 import java.util.Arrays;
 
-public class Solver {
+public class SmartGridSolver {
 
-        private static final int UB = 100;
+        private static final int UB = 200;
         private static final int LB = -UB;
 
-        public static void main(String[] args) {
-
+        public static void solve() {
 
             //Inputs
-/*        int[] supplerSummedForEachHour = new int[]{100, 20, 30, 40, 20, 10, 5, 3, 2, 4, 10, 20, 30, 40, 20, 10, 5, 3, 2, 4, 2, 1, 4, 5};
-        int[] consumer1 = new int[]{42, 12, 75, 31, 17, 44, 82, 36, 80, 22, 66, 57, 54, 68, 76, 78, 96, 73, 14, 84, 70, 10, 65, 95};
-        int[] exportPricePerUnit = new int[]{88, 32, 3, 10, 63, 69, 99, 2, 65, 72, 39, 90, 71, 28, 14, 57, 27, 15, 68, 61, 1, 50, 99, 81};
-        int[] importCostPerUnit = new int[]{0, 0, 0, 56, 77, 90, 4, 41, 35, 98, 36, 95, 25, 9, 97, 2, 23, 62, 68, 93, 40, 13, 43, 70};*/
+            int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{5,5,5,5};
+            int[] importCostPerUnit = new int[]{4, 4, 4, 4};
+/*            int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{5,5,5,5};
+            int[] importCostPerUnit = new int[]{4, 4, 4, 4};*/
 
-            int[] supplerSummedForEachHour = new int[]{100, 20, 30,40};
-            //int[] consumer1 = new int[]{42, 12, 75, 31, 17, 44, 82, 36, 80, 22, 66, 57, 54, 68, 76, 78, 96, 73, 14, 84, 70, 10, 65, 95};
-            //int[] consumer2 = new int[]{42, 44, 97, 12, 95, 51, 99, 26, 63, 15, 90, 87, 93, 67, 48, 23, 9, 59, 31, 34, 79, 92, 80, 10};
+/*            int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{5,5,5,5};
+            int[] importCostPerUnit = new int[]{5, 5, 5, 5};*/
 
-            int[] consumer1 = new int[]{1, 2, 5, 3, 4, 1, 8, 9, 3, 4, 5, 3, 8, 1, 7, 4, 3, 2, 5, 7, 8, 9, 2, 3};
-            int[] consumer2 = new int[]{3, 4, 5, 6, 3, 8, 3, 3, 4, 5, 7, 3, 4, 5, 3, 9, 6, 4, 6, 7, 1, 8, 4, 5};
 
-            int[] exportPricePerUnit = new int[]{88, 32, 3, 10, 63, 69, 99, 2, 65, 72, 39, 90, 71, 28, 14, 57, 27, 15, 68, 61, 1, 50, 99, 81};
-            int[] importCostPerUnit = new int[]{1, 6, 34, 99, 5, 90, 4, 41, 35, 98, 36, 95, 25, 9, 97, 2, 23, 62, 68, 93, 40, 13, 43, 70};
+            //Er sollte so viel wie möglich weg schiften
+            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{10,5,5,5};
+            int[] importCostPerUnit = new int[]{5, 5, 5, 5};*/
+
+            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{20,5,5,5};
+            int[] importCostPerUnit = new int[]{1, 5, 5, 5};*/
+
+            /*int[] supplerSummedForEachHour = new int[]{50, 29, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{5,5,5,5};
+            int[] importCostPerUnit = new int[]{5, 5, 5, 5};+/
+
+            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{20,5,5,5};
+            int[] importCostPerUnit = new int[]{1, 5, 5, 5};*/
+
+            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,0};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{20, 20, 20, 20};
+            int[] exportPricePerUnit = new int[]{20,5,5,5};
+            int[] importCostPerUnit = new int[]{1, 5, 5, 100};*/
+
+            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,0};
+            int[] consumer1 = new int[]{10, 10, 10, 10};
+            int[] consumer2 = new int[]{10, 10, 10, 10};
+            int[] exportPricePerUnit = new int[]{5,5,5,5};
+            int[] importCostPerUnit = new int[]{80, 80, 80, 80};*/
+
+
 
             int profitMultiplicator = Math.max(Arrays.stream(exportPricePerUnit).max().getAsInt(), Arrays.stream(importCostPerUnit).max().getAsInt());
 
@@ -259,6 +300,6 @@ public class Solver {
             }
             System.out.println("Close");
         }
-    
+
 
 }

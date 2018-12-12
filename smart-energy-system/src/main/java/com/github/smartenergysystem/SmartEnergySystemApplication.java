@@ -12,6 +12,8 @@ public class SmartEnergySystemApplication {
 
 	public static void main(String[] args) {
 		//SpringApplication.run(SmartEnergySystemApplication.class, args);
+		SmartGridSolver.solve();
+		/*
 		Model m = new Model("my first problem");
 
 		IntVar[] buy = { m.intVar("buy", 0, 100000), m.intVar("buy", 0, 100000), m.intVar("buy", 0, 100000) };
@@ -172,5 +174,6 @@ public class SmartEnergySystemApplication {
 		}
 		System.out.println("FINISH! FINNISH SAUNA!");
 		System.out.println("Time: " + (System.currentTimeMillis() - millisStart) / 1000);
+		*/
 	}
 }
