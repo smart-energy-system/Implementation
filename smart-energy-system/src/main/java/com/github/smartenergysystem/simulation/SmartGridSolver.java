@@ -16,7 +16,7 @@ public class SmartGridSolver {
         LB = -maxBound;
 
     }
-    private static final int CONVERT_TO_KW = 1000;
+    public static final int CONVERT_TO_KW = 1000;
 
     public SmartGridSolverSolution solve(int[] supplerSummedForEachHour,
                                                 int[] consumer1, int demandFlexibilityAsPartsOfHundred1,
