@@ -11,10 +11,23 @@ public class SmartGridSolver {
 
     int UB;
     int LB;
+
+    boolean onlySingleShifting = false;
+
     public SmartGridSolver(int maxBound){
         UB = maxBound;
         LB = -maxBound;
+    }
 
+    /**
+     *
+     * @param maxBound
+     * @param onlySingleShifting Set to true improves the performance in so cases
+     */
+    public SmartGridSolver(int maxBound,boolean onlySingleShifting){
+        UB = maxBound;
+        LB = -maxBound;
+        this.onlySingleShifting = onlySingleShifting;
     }
     public static final int CONVERT_TO_KW = 1000;
 
@@ -158,7 +171,7 @@ public class SmartGridSolver {
             exportProfitPerHour[index] = smartGridModel.intVar("exportProfitPerHour_" + index, 0, UB * profitMultiplicator * inputSize);
             importCostPerHour[index] = smartGridModel.intVar("importCostPerHour_" + index, 0, UB * profitMultiplicator * inputSize);
 
-            PposShift1[index] = smartGridModel.intVar("PposShift_1_" + index, new int[]{0, (int) ((consumer1[index] * demandFlexibilityAsPartsOfHundred1) / 100)});
+            PposShift1[index] = smartGridModel.intVar("PposShift_1_" + index, 0, UB);
             PnegShift1[index] = smartGridModel.intVar("PnegShift_1_" + index, new int[]{0, (int) ((consumer1[index] * demandFlexibilityAsPartsOfHundred1) / 100)});
 
             Constraint PposShift1Zero1 = smartGridModel.arithm(PposShift1[index], "=", 0);
@@ -171,11 +184,13 @@ public class SmartGridSolver {
             isShiftingPos1[index] = smartGridModel.intVar("isShiftingPos1_" + index, 0, 1);
             isShifitingNeg1[index] = smartGridModel.intVar("isShifitingNeg1_" + index, 0, 1);
 
-            smartGridModel.ifThenElse(isPosShifitingConstraint1, smartGridModel.arithm(isShiftingPos1[index], "=", 1), smartGridModel.arithm(isShiftingPos1[index], "=", 0));
-            smartGridModel.ifThenElse(isNegShifitingConstraint1, smartGridModel.arithm(isShifitingNeg1[index], "=", 1), smartGridModel.arithm(isShifitingNeg1[index], "=", 0));
+            if(onlySingleShifting) {
+                smartGridModel.ifThenElse(isPosShifitingConstraint1, smartGridModel.arithm(isShiftingPos1[index], "=", 1), smartGridModel.arithm(isShiftingPos1[index], "=", 0));
+                smartGridModel.ifThenElse(isNegShifitingConstraint1, smartGridModel.arithm(isShifitingNeg1[index], "=", 1), smartGridModel.arithm(isShifitingNeg1[index], "=", 0));
+            }
             //zweites shifting
 
-            PposShift2[index] = smartGridModel.intVar("PposShift_2_" + index, new int[]{0, (int) ((consumer2[index] * demandFlexibilityAsPartsOfHundred2) / 100)}); //Shift only in Blocks
+            PposShift2[index] = smartGridModel.intVar("PposShift_2_" + index, 0, UB); //Shift only in Blocks
             PnegShift2[index] = smartGridModel.intVar("PnegShift_2_" + index, new int[]{0, (int) ((consumer2[index] * demandFlexibilityAsPartsOfHundred2) / 100)});
 
             Constraint PposShift1Zero2 = smartGridModel.arithm(PposShift2[index], "=", 0);
@@ -187,9 +202,10 @@ public class SmartGridSolver {
             isShiftingPos2[index] = smartGridModel.intVar("isShiftingPos2_" + index, 0, 1);
             isShifitingNeg2[index] = smartGridModel.intVar("isShifitingNeg2_" + index, 0, 1);
 
-            smartGridModel.ifThenElse(isPosShifitingConstraint2, smartGridModel.arithm(isShiftingPos2[index], "=", 1), smartGridModel.arithm(isShiftingPos2[index], "=", 0));
-            smartGridModel.ifThenElse(isNegShifitingConstraint2, smartGridModel.arithm(isShifitingNeg2[index], "=", 1), smartGridModel.arithm(isShifitingNeg2[index], "=", 0));
-
+            if(onlySingleShifting) {
+                smartGridModel.ifThenElse(isPosShifitingConstraint2, smartGridModel.arithm(isShiftingPos2[index], "=", 1), smartGridModel.arithm(isShiftingPos2[index], "=", 0));
+                smartGridModel.ifThenElse(isNegShifitingConstraint2, smartGridModel.arithm(isShifitingNeg2[index], "=", 1), smartGridModel.arithm(isShifitingNeg2[index], "=", 0));
+            }
 
             //Balance equation
             supplerSummdOfEachHourConstants[index].add(Pg[index]).add(Pb[index]).eq(

@@ -86,7 +86,7 @@ public class TestSmartGridSolver {
 		int[] importCostPerUnit = new int[]{2, 2, 2, 2};
 		int maxChargeRateInkW = 5;
 		Battery battery = getBattery(maxChargeRateInkW);
-		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND);
+		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,true);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
 				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
 		//Should charge every step
@@ -161,10 +161,15 @@ public class TestSmartGridSolver {
 
 		int maxChargeRateInkW = 5;
 		Battery battery = getBatteryZero();
-		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND+50);
+		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,true);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
 				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
-		//Todo
+		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
+		checkBatteryIsNeverUsed(steps);
+		assertThat("Should reduce import in Step 1 because importing is expensive",steps.get(1).getPnegShift()[0],
+				greaterThan(0));
+		assertThat("Should reduce import in Step 1 because importing is expensive",steps.get(1).getPnegShift()[1],
+				greaterThan(0));
 	}
 
 
