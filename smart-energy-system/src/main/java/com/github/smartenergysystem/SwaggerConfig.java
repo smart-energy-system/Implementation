@@ -17,6 +17,7 @@ public class SwaggerConfig {
 
 	public static final String SUPPLIER_TAG_NAME = "Supplier";
 	public static final String CONSUMER_TAG_NAME = "Consumer";
+	public static final String SOLVER_TAG_NAME = "Solver";
 
 	@Bean
 	public Docket produceApi() {

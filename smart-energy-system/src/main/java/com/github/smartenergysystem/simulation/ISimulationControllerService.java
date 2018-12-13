@@ -33,5 +33,6 @@ public interface ISimulationControllerService {
 	public Map<Long, Home> getHomeBuildings();
 	public double computeHomeBuildingDemand(long id, int hourOfTheDay);
 	public void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter);
+	public SmartGridSolverSolution solve(int calculationBound);
 	
 }

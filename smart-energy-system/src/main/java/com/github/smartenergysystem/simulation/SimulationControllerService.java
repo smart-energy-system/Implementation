@@ -1,10 +1,6 @@
 package com.github.smartenergysystem.simulation;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,289 +25,371 @@ import com.github.smartenergysystem.weather.WeatherResponse;
 @Service
 public class SimulationControllerService implements ISimulationControllerService {
 
-	Logger logger = LoggerFactory.getLogger(SimulationControllerService.class);
+    private static final int NUMBER_OF_HOUR_TO_CALCULATE = 4;
+    private static final int CONSTANT_IMPORT_CONST_PER_UNIT = 35;
+    private static final int CONSTANT_EXPORT_PRICE_PER_UNIT = 30;
+    Logger logger = LoggerFactory.getLogger(SimulationControllerService.class);
 
-	@Autowired
-	WeatherRepository weatherForecastRepository;
+    @Autowired
+    WeatherRepository weatherForecastRepository;
 
-	@Value("${weatherService.url}")
-	String weatherServiceUrl;
+    @Value("${weatherService.url}")
+    String weatherServiceUrl;
 
-	// Replace with a database after we decided which database we use
-	// probably no need for atomic types because of synchronized methods
-	Long photovoltaicPanelsId = 0L;
-	HashMap<Long, PhotovoltaicPanel> photovoltaicPanels = new HashMap<>();
+    // Replace with a database after we decided which database we use
+    // probably no need for atomic types because of synchronized methods
+    Long photovoltaicPanelsId = 0L;
+    HashMap<Long, PhotovoltaicPanel> photovoltaicPanels = new HashMap<>();
 
-	Long windTurbineId = 0L;
-	HashMap<Long, WindTurbine> windTurbines = new HashMap<>();
+    Long windTurbineId = 0L;
+    HashMap<Long, WindTurbine> windTurbines = new HashMap<>();
 
-	Long batteryId = 0L;
-	HashMap<Long, Battery> batteries = new HashMap<>();
+    Long batteryId = 0L;
+    HashMap<Long, Battery> batteries = new HashMap<>();
 
-	Long officeBuildingId = 0L;
-	HashMap<Long, OfficeBuilding> officeBuildings = new HashMap<>();
-	
-	Long homeBuildingId = 0L;
-	HashMap<Long, Home> homeBuildings = new HashMap<>();
+    Long officeBuildingId = 0L;
+    HashMap<Long, OfficeBuilding> officeBuildings = new HashMap<>();
 
-	@Override
-	public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
-		WeatherResponse weatherResponse = registerForWeatherData(photovoltaicPanel.getLatitude(),
-				photovoltaicPanel.getLongitude());
-		photovoltaicPanelsId++;
-		photovoltaicPanels.put(photovoltaicPanelsId, photovoltaicPanel);
-		return photovoltaicPanelsId;
-	}
+    Long homeBuildingId = 0L;
+    HashMap<Long, Home> homeBuildings = new HashMap<>();
 
-	public synchronized Map<Long, PhotovoltaicPanel> getPhotovoltaicPanels() {
-		return photovoltaicPanels;
-	}
+    @Override
+    public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
+        WeatherResponse weatherResponse = registerForWeatherData(photovoltaicPanel.getLatitude(),
+                photovoltaicPanel.getLongitude());
+        photovoltaicPanelsId++;
+        photovoltaicPanels.put(photovoltaicPanelsId, photovoltaicPanel);
+        return photovoltaicPanelsId;
+    }
 
-	@Override
-	public synchronized PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
-		return photovoltaicPanels.get(panelId);
-	}
+    public synchronized Map<Long, PhotovoltaicPanel> getPhotovoltaicPanels() {
+        return photovoltaicPanels;
+    }
 
-	@Override
-	public synchronized Long addWindTurbine(WindTurbine windTurbine) {
-		registerForWeatherData(windTurbine.getLatitude(), windTurbine.getLongitude());
-		windTurbineId++;
-		getWindTurbines().put(windTurbineId, windTurbine);
-		return windTurbineId;
-	}
+    @Override
+    public synchronized PhotovoltaicPanel getPhotovoltaicPanel(Long panelId) {
+        return photovoltaicPanels.get(panelId);
+    }
 
-	private synchronized WeatherResponse registerForWeatherData(double latitude, double longitude) {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.set("Content-Type", "application/json");
-		RestTemplate restTemplate = new RestTemplate();
-		WeatherRequest weatherRequest = new WeatherRequest(latitude, longitude);
-		HttpEntity<WeatherRequest> httpRequest = new HttpEntity<WeatherRequest>(weatherRequest, httpHeaders);
-		ResponseEntity<WeatherResponse> weatherResponseEntity = restTemplate.postForEntity(weatherServiceUrl,
-				httpRequest, WeatherResponse.class);
-		return weatherResponseEntity.getBody();
-	}
+    @Override
+    public synchronized Long addWindTurbine(WindTurbine windTurbine) {
+        registerForWeatherData(windTurbine.getLatitude(), windTurbine.getLongitude());
+        windTurbineId++;
+        getWindTurbines().put(windTurbineId, windTurbine);
+        return windTurbineId;
+    }
 
-	@Override
-	public synchronized Map<Long, WindTurbine> getWindTurbines() {
-		return windTurbines;
-	}
+    private synchronized WeatherResponse registerForWeatherData(double latitude, double longitude) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Content-Type", "application/json");
+        RestTemplate restTemplate = new RestTemplate();
+        WeatherRequest weatherRequest = new WeatherRequest(latitude, longitude);
+        HttpEntity<WeatherRequest> httpRequest = new HttpEntity<WeatherRequest>(weatherRequest, httpHeaders);
+        ResponseEntity<WeatherResponse> weatherResponseEntity = restTemplate.postForEntity(weatherServiceUrl,
+                httpRequest, WeatherResponse.class);
+        return weatherResponseEntity.getBody();
+    }
 
-	@Override
-	public synchronized WindTurbine getWindTurbine(Long turbineId) {
-		if (windTurbines.containsKey(turbineId)) {
-			return windTurbines.get(turbineId);
-		} else {
-			throw new IdNotFoundException();
-		}
-	}
+    @Override
+    public synchronized Map<Long, WindTurbine> getWindTurbines() {
+        return windTurbines;
+    }
 
-	@Override
-	public synchronized double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
-		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(panelId, photovoltaicPanels);
-		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
-		int dayOfTheYear = getDayOfTheYear(weatherHistory.getTimestamp());
-		logger.debug("Calculating photovoltaic panel energy for temp:" + weatherHistory.getTemperature() + " sunpower:"
-				+ weatherHistory.getGlobalHorizontalSolarIrradiance() + " dayOfTheYear:" + dayOfTheYear);
-		double energy = photovoltaicPanel.computeEnergyGenerated(weatherHistory.getTemperature(),
-				weatherHistory.getGlobalHorizontalSolarIrradiance(), dayOfTheYear);
-		logger.debug("Result:" + energy);
-		return energy;
+    @Override
+    public synchronized WindTurbine getWindTurbine(Long turbineId) {
+        if (windTurbines.containsKey(turbineId)) {
+            return windTurbines.get(turbineId);
+        } else {
+            throw new IdNotFoundException();
+        }
+    }
 
-	}
+    @Override
+    public synchronized double computeEnergyGeneratedPhotovoltaicPanel(Long panelId) {
+        WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(panelId, photovoltaicPanels);
+        PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(panelId);
+        int dayOfTheYear = getDayOfTheYear(weatherHistory.getTimestamp());
+        logger.debug("Calculating photovoltaic panel energy for temp:" + weatherHistory.getTemperature() + " sunpower:"
+                + weatherHistory.getGlobalHorizontalSolarIrradiance() + " dayOfTheYear:" + dayOfTheYear);
+        double energy = photovoltaicPanel.computeEnergyGenerated(weatherHistory.getTemperature(),
+                weatherHistory.getGlobalHorizontalSolarIrradiance(), dayOfTheYear);
+        logger.debug("Result:" + energy);
+        return energy;
 
-	@Override
-	public synchronized double computeEnergyGeneratedWindTurbine(Long id) {
-		WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(id, windTurbines);
-		WindTurbine windTurbine = windTurbines.get(id);
-		double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
-				weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(), weatherHistory.getTemperature());
-		return energy;
-	}
+    }
 
-	private synchronized WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
-			HashMap<Long, ? extends PositionEntity> entityList) {
-		if (entityList.containsKey(id)) {
-			PositionEntity entity = entityList.get(id);
-			logger.debug("Requesting most recent weather data for entity " + id);
-			WeatherHistory weatherHistory = weatherForecastRepository
-					.findFirstByLatitudeAndLongitudeOrderByTimestampDesc(entity.getLatitude(), entity.getLongitude());
-			if (weatherHistory != null) {
-				logger.debug("Most recent data is from:" + weatherHistory.getTimestamp());
-				return weatherHistory;
-			} else {
-				throw new NoWeatherDataFoundException();
-			}
-		} else {
-			throw new IdNotFoundException();
-		}
-	}
+    @Override
+    public synchronized double computeEnergyGeneratedWindTurbine(Long id) {
+        WeatherHistory weatherHistory = getMostRecentWeatherHistoryForSupplier(id, windTurbines);
+        WindTurbine windTurbine = windTurbines.get(id);
+        double energy = windTurbine.computeEnergyGenerated(weatherHistory.getWindSpeed(),
+                weatherHistory.getAirPressureInPascal(), weatherHistory.getHumidity(), weatherHistory.getTemperature());
+        return energy;
+    }
 
-	private synchronized int getDayOfTheYear(long timestamp) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(timestamp);
-		int dayOfTheYear = cal.get(Calendar.DAY_OF_YEAR);
-		return dayOfTheYear;
-	}
+    private synchronized WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
+                                                                               HashMap<Long, ? extends PositionEntity> entityList) {
+        if (entityList.containsKey(id)) {
+            PositionEntity entity = entityList.get(id);
+            logger.debug("Requesting most recent weather data for entity " + id);
+            WeatherHistory weatherHistory = weatherForecastRepository
+                    .findFirstByLatitudeAndLongitudeOrderByTimestampDesc(entity.getLatitude(), entity.getLongitude());
+            if (weatherHistory != null) {
+                logger.debug("Most recent data is from:" + weatherHistory.getTimestamp());
+                return weatherHistory;
+            } else {
+                throw new NoWeatherDataFoundException();
+            }
+        } else {
+            throw new IdNotFoundException();
+        }
+    }
 
-	/**
-	 * Solves A2.9
-	 */
-	@Override
-	public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
-			long maxTimestampOffset) {
-		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
-				photovoltaicPanels);
-		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
-		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
-		weatherForecastList.forEach(weatherforecast -> {
-			double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
-					weatherforecast.getGlobalHorizontalSolarIrradiance(),
-					getDayOfTheYear(weatherforecast.getTimestamp()));
-			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
-		});
-		EnergyForecast energyForecast = new EnergyForecast();
-		logger.debug("Size of generation forecast:" + energyforecastMap.size());
-		energyForecast.setForecast(energyforecastMap);
-		return energyForecast;
+    private synchronized int getDayOfTheYear(long timestamp) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(timestamp);
+        int dayOfTheYear = cal.get(Calendar.DAY_OF_YEAR);
+        return dayOfTheYear;
+    }
 
-	}
+    /**
+     * Solves A2.9
+     */
+    @Override
+    public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
+                                                                                      long maxTimestampOffset) {
+        List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
+                photovoltaicPanels);
+        PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
+        TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
+        weatherForecastList.forEach(weatherforecast -> {
+            double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
+                    weatherforecast.getGlobalHorizontalSolarIrradiance(),
+                    getDayOfTheYear(weatherforecast.getTimestamp()));
+            energyforecastMap.put(weatherforecast.getTimestamp(), energy);
+        });
+        EnergyForecast energyForecast = new EnergyForecast();
+        logger.debug("Size of generation forecast:" + energyforecastMap.size());
+        energyForecast.setForecast(energyforecastMap);
+        return energyForecast;
 
-	/**
-	 * Solves A2.5
-	 */
-	@Override
-	public synchronized EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
-		List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset, windTurbines);
-		logger.debug("Got " + weatherForecastList.size() + " forecasts");
-		WindTurbine windTurbine = windTurbines.get(id);
-		TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
-		weatherForecastList.forEach(weatherforecast -> {
-			logger.debug("Weatherforecast " + weatherforecast.toString());
-			double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(),
-					weatherforecast.getAirPressureInPascal(), weatherforecast.getHumidity(),
-					weatherforecast.getTemperature());
-			logger.debug("Energy for this forecast:" + energy);
-			energyforecastMap.put(weatherforecast.getTimestamp(), energy);
-		});
-		EnergyForecast energyForecast = new EnergyForecast();
-		logger.debug("Size of generation forecast:" + energyforecastMap.size());
-		energyForecast.setForecast(energyforecastMap);
-		return energyForecast;
-	}
+    }
 
-	private synchronized List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
-			HashMap<Long, ? extends PositionEntity> entityList) {
-		if (entityList.containsKey(id)) {
-			PositionEntity entity = entityList.get(id);
-			logger.debug("Requesting forecast data for entity " + id);
-			List<WeatherForecast> weatherForecastList = weatherForecastRepository
-					.findByLatitudeAndLongitudeAndTimestampLessThan(entity.getLatitude(), entity.getLongitude(),
-							System.currentTimeMillis() + maxTimestampOffset);
-			if (weatherForecastList != null && weatherForecastList.size() > 0) {
-				return weatherForecastList;
-			} else {
-				logger.debug("Got none forecasts");
-				throw new NoWeatherDataFoundException();
-			}
-		} else {
-			throw new IdNotFoundException();
-		}
-	}
+    /**
+     * Solves A2.5
+     */
+    @Override
+    public synchronized EnergyForecast computeEnergyGenerateForecastWindTurbine(Long id, long maxTimestampOffset) {
+        List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset, windTurbines);
+        logger.debug("Got " + weatherForecastList.size() + " forecasts");
+        WindTurbine windTurbine = windTurbines.get(id);
+        TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
+        weatherForecastList.forEach(weatherforecast -> {
+            logger.debug("Weatherforecast " + weatherforecast.toString());
+            double energy = windTurbine.computeEnergyGenerated(weatherforecast.getWindSpeed(),
+                    weatherforecast.getAirPressureInPascal(), weatherforecast.getHumidity(),
+                    weatherforecast.getTemperature());
+            logger.debug("Energy for this forecast:" + energy);
+            energyforecastMap.put(weatherforecast.getTimestamp(), energy);
+        });
+        EnergyForecast energyForecast = new EnergyForecast();
+        logger.debug("Size of generation forecast:" + energyforecastMap.size());
+        energyForecast.setForecast(energyforecastMap);
+        return energyForecast;
+    }
 
-	private boolean isIdValid(Long id, Map<Long, ?> entities) {
-		if (entities.containsKey(id)) {
-			return true;
-		} else {
-			throw new IdNotFoundException();
-		}
-	}
+    private synchronized List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
+                                                                             HashMap<Long, ? extends PositionEntity> entityList) {
+        if (entityList.containsKey(id)) {
+            PositionEntity entity = entityList.get(id);
+            logger.debug("Requesting forecast data for entity " + id);
+            List<WeatherForecast> weatherForecastList = weatherForecastRepository
+                    .findByLatitudeAndLongitudeAndTimestampLessThan(entity.getLatitude(), entity.getLongitude(),
+                            System.currentTimeMillis() + maxTimestampOffset);
+            if (weatherForecastList != null && weatherForecastList.size() > 0) {
+                return weatherForecastList;
+            } else {
+                logger.debug("Got none forecasts");
+                throw new NoWeatherDataFoundException();
+            }
+        } else {
+            throw new IdNotFoundException();
+        }
+    }
 
-	@Override
-	public synchronized Long addBattery(Battery battery) {
-		batteryId++;
-		batteries.put(batteryId, battery);
-		return batteryId;
-	}
+    private boolean isIdValid(Long id, Map<Long, ?> entities) {
+        if (entities.containsKey(id)) {
+            return true;
+        } else {
+            throw new IdNotFoundException();
+        }
+    }
 
-	@Override
-	public synchronized Battery getBattery(Long id) {
-		isIdValid(id, batteries);
-		return batteries.get(id);
-	}
+    @Override
+    public synchronized Long addBattery(Battery battery) {
+        batteryId++;
+        batteries.put(batteryId, battery);
+        return batteryId;
+    }
 
-	@Override
-	public synchronized Map<Long, Battery> getBatterys() {
-		return batteries;
-	}
+    @Override
+    public synchronized Battery getBattery(Long id) {
+        isIdValid(id, batteries);
+        return batteries.get(id);
+    }
 
-	@Override
-	public synchronized Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput) {
-		isIdValid(id, batteries);
-		Battery battery = batteries.get(id);
-		battery.computeStoredEnergy(chargeProcessInput.getDischargingRate(), chargeProcessInput.getChargingRate(),
-				chargeProcessInput.getChargingEfficiency());
-		return battery;
-	}
+    @Override
+    public synchronized Map<Long, Battery> getBatterys() {
+        return batteries;
+    }
 
-	@Override
-	public synchronized Long addOfficeBuilding(OfficeBuilding officeBuilding) {
-		officeBuildingId++;
-		officeBuildings.put(officeBuildingId, officeBuilding);
-		return officeBuildingId;
-	}
+    @Override
+    public synchronized Battery computebatteryChargeProcess(long id, ChargeProcessInput chargeProcessInput) {
+        isIdValid(id, batteries);
+        Battery battery = batteries.get(id);
+        battery.computeStoredEnergy(chargeProcessInput.getDischargingRate(), chargeProcessInput.getChargingRate(),
+                chargeProcessInput.getChargingEfficiency());
+        return battery;
+    }
 
-	@Override
-	public synchronized OfficeBuilding getOfficeBuilding(Long id) {
-		isIdValid(id, officeBuildings);
-		return officeBuildings.get(id);
-	}
+    @Override
+    public synchronized Long addOfficeBuilding(OfficeBuilding officeBuilding) {
+        officeBuildingId++;
+        officeBuildings.put(officeBuildingId, officeBuilding);
+        return officeBuildingId;
+    }
 
-	@Override
-	public synchronized Map<Long, OfficeBuilding> getOfficeBuildings() {
-		return officeBuildings;
-	}
+    @Override
+    public synchronized OfficeBuilding getOfficeBuilding(Long id) {
+        isIdValid(id, officeBuildings);
+        return officeBuildings.get(id);
+    }
 
-	@Override
-	public synchronized double computeOfficeBuildingDemand(long id, int hourOfTheDay) {
-		isIdValid(id, officeBuildings);
-		return officeBuildings.get(id).calculateDemand(hourOfTheDay);
-	}
+    @Override
+    public synchronized Map<Long, OfficeBuilding> getOfficeBuildings() {
+        return officeBuildings;
+    }
 
-	@Override
-	public synchronized void setOfficeBuildingsHourlyBaseDemandPerSquareMeter(long id,double[] hourlyBaseDemandPerSquareMeter) {
-		isIdValid(id, officeBuildings);
-		officeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
-	}
+    @Override
+    public synchronized double computeOfficeBuildingDemand(long id, int hourOfTheDay) {
+        isIdValid(id, officeBuildings);
+        return officeBuildings.get(id).calculateDemand(hourOfTheDay);
+    }
 
-	@Override
-	public synchronized Long addHomeBuilding(Home home) {
-		homeBuildingId++;
-		homeBuildings.put(homeBuildingId, home);
-		return homeBuildingId;
-	}
+    @Override
+    public synchronized void setOfficeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter) {
+        isIdValid(id, officeBuildings);
+        officeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
+    }
 
-	@Override
-	public synchronized Home getHomeBuilding(long id) {
-		isIdValid(id, homeBuildings);
-		return homeBuildings.get(id);
-	}
+    @Override
+    public synchronized Long addHomeBuilding(Home home) {
+        homeBuildingId++;
+        homeBuildings.put(homeBuildingId, home);
+        return homeBuildingId;
+    }
 
-	@Override
-	public synchronized Map<Long, Home> getHomeBuildings() {
-		// TODO Auto-generated method stub
-		return homeBuildings;
-	}
+    @Override
+    public synchronized Home getHomeBuilding(long id) {
+        isIdValid(id, homeBuildings);
+        return homeBuildings.get(id);
+    }
 
-	@Override
-	public synchronized double computeHomeBuildingDemand(long id, int hourOfTheDay) {
-		isIdValid(id, homeBuildings);
-		return homeBuildings.get(id).calculateDemand(hourOfTheDay);
-	}
+    @Override
+    public synchronized Map<Long, Home> getHomeBuildings() {
+        // TODO Auto-generated method stub
+        return homeBuildings;
+    }
 
-	@Override
-	public synchronized void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter) {
-		isIdValid(id, homeBuildings);
-		homeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
-	}
+    @Override
+    public synchronized double computeHomeBuildingDemand(long id, int hourOfTheDay) {
+        isIdValid(id, homeBuildings);
+        return homeBuildings.get(id).calculateDemand(hourOfTheDay);
+    }
+
+    @Override
+    public synchronized void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter) {
+        isIdValid(id, homeBuildings);
+        homeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
+    }
+
+    @Override
+    public synchronized SmartGridSolverSolution solve(int calculationBound) {
+        //LinkedList<Integer> summedSuppler = new LinkedList<>();
+        System.out.println("Solve");
+        int[] summedSupplier = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        LinkedList<EnergyForecast> forecasts = new LinkedList<>();
+        for (Map.Entry<Long, PhotovoltaicPanel> entry : photovoltaicPanels.entrySet()) {
+            EnergyForecast energyForecast = computeEnergyGenerateForecastPhotovoltaicPanel(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
+            forecasts.add(energyForecast);
+        }
+        for (Map.Entry<Long, WindTurbine> entry : windTurbines.entrySet()) {
+            EnergyForecast energyForecast = computeEnergyGenerateForecastWindTurbine(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
+            forecasts.add(energyForecast);
+        }
+
+        for (EnergyForecast energyForecast : forecasts) {
+            int counter = 0;
+            System.out.println(energyForecast.getForecast().entrySet().size());
+            for (Map.Entry<Long, Double> forecastItem : energyForecast.getForecast().entrySet()) {
+                summedSupplier[counter] = summedSupplier[counter] + (int) forecastItem.getValue().intValue();
+                System.out.println(forecastItem.getValue());
+                if (counter == summedSupplier.length - 1) {
+                    break;
+                }
+                counter++;
+            }
+        }
+        //Convert to kW
+        for (int i = 0; i < summedSupplier.length; i++) {
+            summedSupplier[i] = summedSupplier[i] / 1000;
+        }
+
+        //Consumers are already in kW
+        //Get first consumer
+        int[] homeConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE]; //4 hour solutions
+        double homeConsmerSmallestDemandFlexibility = Double.MAX_VALUE;
+        Calendar calendar = Calendar.getInstance();
+        for (Map.Entry<Long, Home> homeBuilding : homeBuildings.entrySet()) {
+            for (int i = 0; i < homeConsumersSummed.length; i++) {
+                System.out.println("i:" + i + " Consumer:" + computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
+                homeConsumersSummed[i] = homeConsumersSummed[i] + (int) computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY));
+                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                if (homeBuilding.getValue().getDemandFlexibility() < homeConsmerSmallestDemandFlexibility) {
+                    homeConsmerSmallestDemandFlexibility = homeBuilding.getValue().getDemandFlexibility();
+                }
+            }
+        }
+        int[] officeBuildingConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        calendar = Calendar.getInstance();
+        double officeBuildingSmallestDemandFlexibility = Double.MAX_VALUE;
+        for (Map.Entry<Long, OfficeBuilding> officeBuilding : officeBuildings.entrySet()) {
+            for (int i = 0; i < officeBuildingConsumersSummed.length; i++) {
+                System.out.println("i:" + i + "OfficeConsumer:" + computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
+                officeBuildingConsumersSummed[i] = officeBuildingConsumersSummed[i] + (int) computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY));
+                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                if (officeBuilding.getValue().getDemandFlexibility() < officeBuildingSmallestDemandFlexibility) {
+                    officeBuildingSmallestDemandFlexibility = officeBuilding.getValue().getDemandFlexibility();
+                }
+            }
+        }
+        System.out.println(Arrays.toString(officeBuildingConsumersSummed));
+        System.out.println(Arrays.toString(homeConsumersSummed));
+        System.out.println(Arrays.toString(summedSupplier));
+        int[] importCostPerUnit = new int[24];//One price per hour
+        int[] exportPricePerUnit = new int[24];
+        for (int i = 0; i < importCostPerUnit.length; i++) {
+            importCostPerUnit[i] = CONSTANT_IMPORT_CONST_PER_UNIT;
+            exportPricePerUnit[i] = CONSTANT_EXPORT_PRICE_PER_UNIT;
+        }
+
+        //maybe sum later
+        SmartGridSolver solver = new SmartGridSolver(calculationBound);
+        return solver.solve(summedSupplier,
+                homeConsumersSummed, (int) homeConsmerSmallestDemandFlexibility * 100,
+                officeBuildingConsumersSummed, (int) officeBuildingSmallestDemandFlexibility * 100,
+                exportPricePerUnit, importCostPerUnit,batteries.get(1L),80);
+    }
+
 
 }

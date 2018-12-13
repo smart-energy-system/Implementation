@@ -1,9 +1,6 @@
 package com.github.smartenergysystem;
 
-import org.chocosolver.solver.Model;
-import org.chocosolver.solver.Solution;
-import org.chocosolver.solver.Solver;
-import org.chocosolver.solver.variables.IntVar;
+import com.github.smartenergysystem.simulation.SmartGridSolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -11,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SmartEnergySystemApplication {
 
 	public static void main(String[] args) {
-		//SpringApplication.run(SmartEnergySystemApplication.class, args);
-		SmartGridSolver.solve();
+		SpringApplication.run(SmartEnergySystemApplication.class, args);
+		//SmartGridSolver.solve();
 		/*
 		Model m = new Model("my first problem");
 

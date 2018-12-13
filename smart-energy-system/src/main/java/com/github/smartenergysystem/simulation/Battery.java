@@ -4,11 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Battery {
 
-	@ApiModelProperty(required = true, example = "10")
+	@ApiModelProperty(required = true, example = "12000")
 	private double maximumStoredEnergy;
-	@ApiModelProperty(required = true, example = "5")
+	@ApiModelProperty(required = true, example = "4000")
 	private double maximumChargingRate;
-	@ApiModelProperty(required = true, example = "2")
+	@ApiModelProperty(required = true, example = "2000")
 	private double maximumDischargingRate;
 	@ApiModelProperty(required = true, example = "0")
 	private double storedEnergy;

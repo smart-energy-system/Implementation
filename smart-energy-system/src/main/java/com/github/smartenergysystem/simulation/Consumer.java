@@ -7,12 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
 public class Consumer{
 	
 	private double[] hourlyBaseDemandPerSquareMeter;
-	@ApiModelProperty(required = true, example = "10")
+	@ApiModelProperty(required = true, example = "1000")
 	private double floorAreaSize;
 	@ApiModelProperty(required = true, example = "1")
 	private double averageDailyOccupancy;
 	
-	@ApiModelProperty(required = true, example = "0")
+	@ApiModelProperty(required = true, example = "0.3")
 	private double demandFlexibility;
 	
 	public Consumer() {};
