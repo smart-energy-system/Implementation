@@ -1,5 +1,5 @@
 
-package com.github.smartenergysystem.dynamicPricing.xml;
+package com.github.smartenergysystem.price.collector.priceCollector.xml;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

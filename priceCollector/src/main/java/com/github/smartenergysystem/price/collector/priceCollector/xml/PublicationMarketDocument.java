@@ -1,19 +1,12 @@
 
-package com.github.smartenergysystem.dynamicPricing.xml;
+package com.github.smartenergysystem.price.collector.priceCollector.xml;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Generated;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.*;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -185,15 +178,15 @@ public class PublicationMarketDocument {
     protected PublicationMarketDocument.PeriodTimeInterval periodTimeInterval;
     @XmlElement(name = "TimeSeries", namespace = "urn:iec62325.351:tc57wg16:451-3:publicationdocument:7:0")
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
-    protected List<PublicationMarketDocument.TimeSeries> timeSeries;
+    protected List<TimeSeries> timeSeries;
 
     /**
      * Ruft den Wert der mrid-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getMRID() {
@@ -202,11 +195,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der mrid-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setMRID(String value) {
@@ -215,7 +208,7 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der revisionNumber-Eigenschaft ab.
-     * 
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public byte getRevisionNumber() {
@@ -224,7 +217,7 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der revisionNumber-Eigenschaft fest.
-     * 
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setRevisionNumber(byte value) {
@@ -233,11 +226,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der type-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getType() {
@@ -246,11 +239,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der type-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setType(String value) {
@@ -259,11 +252,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der senderMarketParticipantMRID-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PublicationMarketDocument.SenderMarketParticipantMRID }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public PublicationMarketDocument.SenderMarketParticipantMRID getSenderMarketParticipantMRID() {
@@ -272,11 +265,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der senderMarketParticipantMRID-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PublicationMarketDocument.SenderMarketParticipantMRID }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setSenderMarketParticipantMRID(PublicationMarketDocument.SenderMarketParticipantMRID value) {
@@ -285,11 +278,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der senderMarketParticipantMarketRoleType-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getSenderMarketParticipantMarketRoleType() {
@@ -298,11 +291,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der senderMarketParticipantMarketRoleType-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setSenderMarketParticipantMarketRoleType(String value) {
@@ -311,11 +304,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der receiverMarketParticipantMRID-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PublicationMarketDocument.ReceiverMarketParticipantMRID }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public PublicationMarketDocument.ReceiverMarketParticipantMRID getReceiverMarketParticipantMRID() {
@@ -324,11 +317,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der receiverMarketParticipantMRID-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PublicationMarketDocument.ReceiverMarketParticipantMRID }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setReceiverMarketParticipantMRID(PublicationMarketDocument.ReceiverMarketParticipantMRID value) {
@@ -337,11 +330,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der receiverMarketParticipantMarketRoleType-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public String getReceiverMarketParticipantMarketRoleType() {
@@ -350,11 +343,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der receiverMarketParticipantMarketRoleType-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setReceiverMarketParticipantMarketRoleType(String value) {
@@ -363,11 +356,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der createdDateTime-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public XMLGregorianCalendar getCreatedDateTime() {
@@ -376,11 +369,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der createdDateTime-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setCreatedDateTime(XMLGregorianCalendar value) {
@@ -389,11 +382,11 @@ public class PublicationMarketDocument {
 
     /**
      * Ruft den Wert der periodTimeInterval-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PublicationMarketDocument.PeriodTimeInterval }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public PublicationMarketDocument.PeriodTimeInterval getPeriodTimeInterval() {
@@ -402,11 +395,11 @@ public class PublicationMarketDocument {
 
     /**
      * Legt den Wert der periodTimeInterval-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PublicationMarketDocument.PeriodTimeInterval }
-     *     
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
     public void setPeriodTimeInterval(PublicationMarketDocument.PeriodTimeInterval value) {
@@ -415,30 +408,30 @@ public class PublicationMarketDocument {
 
     /**
      * Gets the value of the timeSeries property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the timeSeries property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTimeSeries().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PublicationMarketDocument.TimeSeries }
-     * 
-     * 
+     *
+     *
      */
     @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
-    public List<PublicationMarketDocument.TimeSeries> getTimeSeries() {
+    public List<TimeSeries> getTimeSeries() {
         if (timeSeries == null) {
-            timeSeries = new ArrayList<PublicationMarketDocument.TimeSeries>();
+            timeSeries = new ArrayList<TimeSeries>();
         }
         return this.timeSeries;
     }
@@ -446,9 +439,9 @@ public class PublicationMarketDocument {
 
     /**
      * <p>Java-Klasse für anonymous complex type.
-     * 
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -461,8 +454,8 @@ public class PublicationMarketDocument {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -481,11 +474,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der start-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getStart() {
@@ -494,11 +487,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der start-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setStart(String value) {
@@ -507,11 +500,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der end-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getEnd() {
@@ -520,11 +513,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der end-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setEnd(String value) {
@@ -536,9 +529,9 @@ public class PublicationMarketDocument {
 
     /**
      * <p>Java-Klasse für anonymous complex type.
-     * 
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -548,8 +541,8 @@ public class PublicationMarketDocument {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -567,11 +560,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der value-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getValue() {
@@ -580,11 +573,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der value-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setValue(String value) {
@@ -593,11 +586,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der codingScheme-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getCodingScheme() {
@@ -606,11 +599,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der codingScheme-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setCodingScheme(String value) {
@@ -622,9 +615,9 @@ public class PublicationMarketDocument {
 
     /**
      * <p>Java-Klasse für anonymous complex type.
-     * 
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;simpleContent>
@@ -634,8 +627,8 @@ public class PublicationMarketDocument {
      *   &lt;/simpleContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -653,11 +646,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der value-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getValue() {
@@ -666,11 +659,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der value-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setValue(String value) {
@@ -679,11 +672,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der codingScheme-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getCodingScheme() {
@@ -692,11 +685,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der codingScheme-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setCodingScheme(String value) {
@@ -708,9 +701,9 @@ public class PublicationMarketDocument {
 
     /**
      * <p>Java-Klasse für anonymous complex type.
-     * 
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -779,8 +772,8 @@ public class PublicationMarketDocument {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -823,7 +816,7 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der mrid-Eigenschaft ab.
-         * 
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public byte getMRID() {
@@ -832,7 +825,7 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der mrid-Eigenschaft fest.
-         * 
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setMRID(byte value) {
@@ -841,11 +834,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der businessType-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getBusinessType() {
@@ -854,11 +847,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der businessType-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setBusinessType(String value) {
@@ -867,11 +860,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der inDomainMRID-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PublicationMarketDocument.TimeSeries.InDomainMRID }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public PublicationMarketDocument.TimeSeries.InDomainMRID getInDomainMRID() {
@@ -880,11 +873,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der inDomainMRID-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PublicationMarketDocument.TimeSeries.InDomainMRID }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setInDomainMRID(PublicationMarketDocument.TimeSeries.InDomainMRID value) {
@@ -893,11 +886,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der outDomainMRID-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PublicationMarketDocument.TimeSeries.OutDomainMRID }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public PublicationMarketDocument.TimeSeries.OutDomainMRID getOutDomainMRID() {
@@ -906,11 +899,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der outDomainMRID-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PublicationMarketDocument.TimeSeries.OutDomainMRID }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setOutDomainMRID(PublicationMarketDocument.TimeSeries.OutDomainMRID value) {
@@ -919,11 +912,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der currencyUnitName-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getCurrencyUnitName() {
@@ -932,11 +925,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der currencyUnitName-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setCurrencyUnitName(String value) {
@@ -945,11 +938,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der priceMeasureUnitName-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getPriceMeasureUnitName() {
@@ -958,11 +951,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der priceMeasureUnitName-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setPriceMeasureUnitName(String value) {
@@ -971,11 +964,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der curveType-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public String getCurveType() {
@@ -984,11 +977,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der curveType-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link String }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setCurveType(String value) {
@@ -997,11 +990,11 @@ public class PublicationMarketDocument {
 
         /**
          * Ruft den Wert der period-Eigenschaft ab.
-         * 
+         *
          * @return
          *     possible object is
          *     {@link PublicationMarketDocument.TimeSeries.Period }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public PublicationMarketDocument.TimeSeries.Period getPeriod() {
@@ -1010,11 +1003,11 @@ public class PublicationMarketDocument {
 
         /**
          * Legt den Wert der period-Eigenschaft fest.
-         * 
+         *
          * @param value
          *     allowed object is
          *     {@link PublicationMarketDocument.TimeSeries.Period }
-         *     
+         *
          */
         @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
         public void setPeriod(PublicationMarketDocument.TimeSeries.Period value) {
@@ -1024,9 +1017,9 @@ public class PublicationMarketDocument {
 
         /**
          * <p>Java-Klasse für anonymous complex type.
-         * 
+         *
          * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;simpleContent>
@@ -1036,8 +1029,8 @@ public class PublicationMarketDocument {
          *   &lt;/simpleContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1055,11 +1048,11 @@ public class PublicationMarketDocument {
 
             /**
              * Ruft den Wert der value-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public String getValue() {
@@ -1068,11 +1061,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der value-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setValue(String value) {
@@ -1081,11 +1074,11 @@ public class PublicationMarketDocument {
 
             /**
              * Ruft den Wert der codingScheme-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public String getCodingScheme() {
@@ -1094,11 +1087,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der codingScheme-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setCodingScheme(String value) {
@@ -1110,9 +1103,9 @@ public class PublicationMarketDocument {
 
         /**
          * <p>Java-Klasse für anonymous complex type.
-         * 
+         *
          * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;simpleContent>
@@ -1122,8 +1115,8 @@ public class PublicationMarketDocument {
          *   &lt;/simpleContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1141,11 +1134,11 @@ public class PublicationMarketDocument {
 
             /**
              * Ruft den Wert der value-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public String getValue() {
@@ -1154,11 +1147,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der value-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setValue(String value) {
@@ -1167,11 +1160,11 @@ public class PublicationMarketDocument {
 
             /**
              * Ruft den Wert der codingScheme-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public String getCodingScheme() {
@@ -1180,11 +1173,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der codingScheme-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link String }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setCodingScheme(String value) {
@@ -1196,9 +1189,9 @@ public class PublicationMarketDocument {
 
         /**
          * <p>Java-Klasse für anonymous complex type.
-         * 
+         *
          * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-         * 
+         *
          * <pre>
          * &lt;complexType>
          *   &lt;complexContent>
@@ -1234,8 +1227,8 @@ public class PublicationMarketDocument {
          *   &lt;/complexContent>
          * &lt;/complexType>
          * </pre>
-         * 
-         * 
+         *
+         *
          */
         @XmlAccessorType(XmlAccessType.FIELD)
         @XmlType(name = "", propOrder = {
@@ -1254,15 +1247,15 @@ public class PublicationMarketDocument {
             protected Duration resolution;
             @XmlElement(name = "Point", namespace = "urn:iec62325.351:tc57wg16:451-3:publicationdocument:7:0")
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
-            protected List<PublicationMarketDocument.TimeSeries.Period.Point> point;
+            protected List<Point> point;
 
             /**
              * Ruft den Wert der timeInterval-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link PublicationMarketDocument.TimeSeries.Period.TimeInterval }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public PublicationMarketDocument.TimeSeries.Period.TimeInterval getTimeInterval() {
@@ -1271,11 +1264,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der timeInterval-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link PublicationMarketDocument.TimeSeries.Period.TimeInterval }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setTimeInterval(PublicationMarketDocument.TimeSeries.Period.TimeInterval value) {
@@ -1284,11 +1277,11 @@ public class PublicationMarketDocument {
 
             /**
              * Ruft den Wert der resolution-Eigenschaft ab.
-             * 
+             *
              * @return
              *     possible object is
              *     {@link Duration }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public Duration getResolution() {
@@ -1297,11 +1290,11 @@ public class PublicationMarketDocument {
 
             /**
              * Legt den Wert der resolution-Eigenschaft fest.
-             * 
+             *
              * @param value
              *     allowed object is
              *     {@link Duration }
-             *     
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
             public void setResolution(Duration value) {
@@ -1310,30 +1303,30 @@ public class PublicationMarketDocument {
 
             /**
              * Gets the value of the point property.
-             * 
+             *
              * <p>
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the point property.
-             * 
+             *
              * <p>
              * For example, to add a new item, do as follows:
              * <pre>
              *    getPoint().add(newItem);
              * </pre>
-             * 
-             * 
+             *
+             *
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link PublicationMarketDocument.TimeSeries.Period.Point }
-             * 
-             * 
+             *
+             *
              */
             @Generated(value = "com.sun.tools.internal.xjc.Driver", date = "2019-01-07T06:55:08+01:00", comments = "JAXB RI v2.2.8-b130911.1802")
-            public List<PublicationMarketDocument.TimeSeries.Period.Point> getPoint() {
+            public List<Point> getPoint() {
                 if (point == null) {
-                    point = new ArrayList<PublicationMarketDocument.TimeSeries.Period.Point>();
+                    point = new ArrayList<Point>();
                 }
                 return this.point;
             }
