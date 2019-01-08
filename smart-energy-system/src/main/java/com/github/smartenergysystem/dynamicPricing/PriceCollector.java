@@ -37,34 +37,28 @@ public class PriceCollector {
     }
 
     public void collectPrices(DocumentTypes documentType,String area, Date day) throws URISyntaxException {
-        String isoFormattedTimespan = getTimespan(day);
-        System.out.println(isoFormattedTimespan);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://iop-transparency.entsoe.eu/api");
+        TimeZone utc = TimeZone.getTimeZone("UTC");
+        DateFormat customFormat = new SimpleDateFormat("yyyyMMdd");
+        customFormat.setTimeZone(utc);
+        String formatedDay = customFormat.format(day);
+        String startDate = formatedDay + "0000";
+        String endDate = formatedDay + "2300";
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://transparency.entsoe.eu/api");
         builder.queryParam("securityToken",securityToken)
                 .queryParam("in_Domain",area)
                 .queryParam("out_Domain",area)
                 .queryParam("documentType", documentType.toString())
-        .queryParam("TimeInterval",isoFormattedTimespan);
+/*                .queryParam("periodStart","201512312300")
+                .queryParam("periodEnd","201612312300");*/
+                .queryParam("periodStart",startDate)
+                .queryParam("periodEnd",endDate);
+ //       .queryParam("TimeInterval",isoFormattedTimespan);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<PublicationMarketDocument> response
                 = restTemplate.getForEntity(builder.toUriString() , PublicationMarketDocument.class);
         PublicationMarketDocument publicationMarketDocument = response.getBody();
-        System.out.println(response.getBody().getMRID());
-        //Do what you want with
+        publicationMarketDocument.getTimeSeries().get(0).getPeriod().getPoint().forEach(point -> System.out.println(point.getPosition()+ " : "+ point.getPriceAmount()));
     }
 
-    private String getTimespan(Date day) {
-        Calendar calendar=Calendar.getInstance();
-        calendar.setTime(day);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        Date startDate=calendar.getTime();
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        Date endDate=calendar.getTime();
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-        isoFormat.setTimeZone(tz);
-        String startDateISOString = isoFormat.format(startDate);
-        String endDateISOString = isoFormat.format(endDate);
-        return startDateISOString+ "/" + endDateISOString;
-    }
 }
