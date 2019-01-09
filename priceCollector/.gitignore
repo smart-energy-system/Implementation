@@ -1,3 +1,5 @@
+spring-boot-h2-db.mv.db
+
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 

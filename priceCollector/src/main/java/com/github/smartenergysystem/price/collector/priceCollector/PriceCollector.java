@@ -12,6 +12,9 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PriceCollector {
@@ -46,8 +49,9 @@ public class PriceCollector {
 
     public List<DayAheadPricePoint> collectPrices(DocumentTypes documentType, String area, Date startTime, Date endTime) throws URISyntaxException, ParseException {
         TimeZone utc = TimeZone.getTimeZone("UTC");
-        DateFormat customFormat = new SimpleDateFormat("yyyyMMddHH");
+        SimpleDateFormat customFormat = new SimpleDateFormat("yyyyMMddHH");
         customFormat.setTimeZone(utc);
+        System.out.println(startTime.toString());
         String startDate = customFormat.format(startTime) + ZERO_MINUTES;
         String endDate = customFormat.format(endTime) + ZERO_MINUTES;
 
@@ -65,20 +69,27 @@ public class PriceCollector {
         PublicationMarketDocument publicationMarketDocument = response.getBody();
         //TODO add a custom exceptions with the reason why it fails
         if (response.getStatusCode().equals(HttpStatus.OK)) {
-            System.out.println(publicationMarketDocument.getTimeSeries().size());
             if (publicationMarketDocument.getTimeSeries().size() != 0) {
                 LinkedList<DayAheadPricePoint> prices = new LinkedList<>();
                 SimpleDateFormat isoDataFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+                isoDataFormat.setTimeZone(utc);
                 for (PublicationMarketDocument.TimeSeries timeSeries : publicationMarketDocument.getTimeSeries()) {
+                    logger.info("Processing TimeSeries:"+timeSeries.getMRID());
                     if (timeSeries.getCurrencyUnitName().equals(SUPPORTED_CURRENCY) && timeSeries.getPriceMeasureUnitName().equals(SUPPORTED_PRICE_MEASURE_UNIT)) {
                         PublicationMarketDocument.TimeSeries.Period period = timeSeries.getPeriod();
-                        Date timeSeriesBaseDate = isoDataFormat.parse(period.getTimeInterval().getStart());//)new Date(period.getTimeInterval().getStart());
+                        String startTimeOfTimeSeries = period.getTimeInterval().getStart();
+                        Date timeSeriesBaseDate = isoDataFormat.parse(startTimeOfTimeSeries);//)new Date(period.getTimeInterval().getStart());
                         Calendar calender = Calendar.getInstance();
+                        calender.setTimeZone(utc);
                         calender.setTime(timeSeriesBaseDate);
-                        calender.add(Calendar.HOUR, -1);//First point is at base Date
+                        logger.info("Start time as set:"+startTimeOfTimeSeries+ " Parsed time:"+calender.getTime());
+                        //calender.add(Calendar.HOUR, -1);//First point is at base Date
                         period.getPoint().forEach(point -> {
-                            calender.add(Calendar.HOUR, POINT_HOUR_OFFSET);
-                            prices.add(new DayAheadPricePoint(calender.getTime(), point.getPriceAmount()));
+                            Date timeOfPricePoint = calender.getTime();
+                            float amount = point.getPriceAmount();
+                            logger.info("Adding price point:"+timeOfPricePoint + " with amount:"+amount);
+                            prices.add(new DayAheadPricePoint(timeOfPricePoint, amount));
+                            calender.add(Calendar.HOUR_OF_DAY, POINT_HOUR_OFFSET);
                         });
                     } else {
                         logger.error("Response uses the wrong units");
