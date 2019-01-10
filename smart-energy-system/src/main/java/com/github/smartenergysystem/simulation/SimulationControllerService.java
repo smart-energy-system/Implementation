@@ -1,15 +1,17 @@
 package com.github.smartenergysystem.simulation;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.github.smartenergysystem.model.exeptions.PriceServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.smartenergysystem.model.ChargeProcessInput;
@@ -21,6 +23,7 @@ import com.github.smartenergysystem.weather.WeatherHistory;
 import com.github.smartenergysystem.weather.WeatherRepository;
 import com.github.smartenergysystem.weather.WeatherRequest;
 import com.github.smartenergysystem.weather.WeatherResponse;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class SimulationControllerService implements ISimulationControllerService {
@@ -28,6 +31,8 @@ public class SimulationControllerService implements ISimulationControllerService
     private static final int NUMBER_OF_HOUR_TO_CALCULATE = 4;
     private static final int CONSTANT_IMPORT_CONST_PER_UNIT = 35;
     private static final int CONSTANT_EXPORT_PRICE_PER_UNIT = 30;
+    private static final int CONVERT_MWH_TO_KWH = 1000;
+    private static final int CONVERT_EURO_TO_CENT = 100;
     Logger logger = LoggerFactory.getLogger(SimulationControllerService.class);
 
     @Autowired
@@ -35,6 +40,9 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Value("${weatherService.url}")
     String weatherServiceUrl;
+
+    @Value("${priceCollector.url}")
+    String priceCollectorUrl;
 
     // Replace with a database after we decided which database we use
     // probably no need for atomic types because of synchronized methods
@@ -314,7 +322,9 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     @Override
-    public synchronized SmartGridSolverSolution solve(int calculationBound) {
+    @Transactional(readOnly = true)
+    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, int efficiencyChargingAsPartsOfHundred) {
+
         //LinkedList<Integer> summedSuppler = new LinkedList<>();
         System.out.println("Solve");
         int[] summedSupplier = new int[NUMBER_OF_HOUR_TO_CALCULATE];
@@ -373,22 +383,68 @@ public class SimulationControllerService implements ISimulationControllerService
                 }
             }
         }
-        System.out.println(Arrays.toString(officeBuildingConsumersSummed));
-        System.out.println(Arrays.toString(homeConsumersSummed));
-        System.out.println(Arrays.toString(summedSupplier));
-        int[] importCostPerUnit = new int[24];//One price per hour
-        int[] exportPricePerUnit = new int[24];
-        for (int i = 0; i < importCostPerUnit.length; i++) {
-            importCostPerUnit[i] = CONSTANT_IMPORT_CONST_PER_UNIT;
-            exportPricePerUnit[i] = CONSTANT_EXPORT_PRICE_PER_UNIT;
+
+        logger.info("Summed Supplier for each hour:");
+        logger.info(Arrays.toString(summedSupplier));
+        logger.info("Summed home consumer for each hour:");
+        logger.info(Arrays.toString(homeConsumersSummed));
+
+        logger.info("Summed officeBuildingConsumersSummed for each hour:");
+        logger.info(Arrays.toString(officeBuildingConsumersSummed));
+
+        logger.info("OfficeBuildingConsumers flex:"+officeBuildingSmallestDemandFlexibility);
+        logger.info("homeConsumers flex:"+homeConsmerSmallestDemandFlexibility);
+        int[] importCostPerUnit = requestPrices(NUMBER_OF_HOUR_TO_CALCULATE);
+        int[] exportPricePerUnit = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        for (int i = 0; i < exportPricePerUnit.length; i++) {
+            exportPricePerUnit[i] = exportPrice;
         }
 
-        //maybe sum later
+//        int[] summedConsumers = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+//        for(int i = 0;i<summedConsumers.length;i++){
+//            summedConsumers[i] = officeBuildingConsumersSummed[i]+homeConsumersSummed[i];
+//
+//        }
+//        logger.info("All consumers summed for each hour:");
+//        logger.info(Arrays.toString(summedConsumers));
         SmartGridSolver solver = new SmartGridSolver(calculationBound);
         return solver.solve(summedSupplier,
-                homeConsumersSummed, (int) homeConsmerSmallestDemandFlexibility * 100,
-                officeBuildingConsumersSummed, (int) officeBuildingSmallestDemandFlexibility * 100,
+                homeConsumersSummed, (int) (homeConsmerSmallestDemandFlexibility * 100),
+                officeBuildingConsumersSummed, (int) (officeBuildingSmallestDemandFlexibility * 100),
                 exportPricePerUnit, importCostPerUnit,batteries.get(1L),80);
+    }
+
+    public synchronized int[] requestPrices(int numberOfHours){
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendar.setTime(new Date());
+        calendar.set(Calendar.MINUTE,0);
+        Date startDate = calendar.getTime();
+        calendar.add(Calendar.HOUR_OF_DAY,numberOfHours);
+        Date endDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(priceCollectorUrl)
+        .queryParam("startDate",dateFormat.format(startDate))
+        .queryParam("endDate",dateFormat.format(endDate));
+        logger.info("Price request uri:"+builder.toUriString());
+        RestTemplate restTemplate = new RestTemplate();
+        ParameterizedTypeReference<List<DayAheadPricePoint>> parameterizedTypeReferencePriceList  = new ParameterizedTypeReference<List<DayAheadPricePoint>>(){};
+        ResponseEntity<List<DayAheadPricePoint>> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null, parameterizedTypeReferencePriceList);
+        if(response.getStatusCode().value() == HttpStatus.OK.value()){
+            logger.info("Got following prices");
+            List<DayAheadPricePoint> pricePointList = response.getBody();
+            pricePointList.forEach(price -> logger.info(price.toString()));
+            int[] prices = new int[pricePointList.size()];
+            int i = 0;
+            for (DayAheadPricePoint dayAheadPricePoint : pricePointList) {
+                prices[i] = (int)((dayAheadPricePoint.getPriceInEuroPerMWh()/ CONVERT_MWH_TO_KWH) * CONVERT_EURO_TO_CENT);
+                logger.info("Got Cent price per kWh:"+prices[i]);
+                i++;
+            }
+            return prices;
+        }else{
+            throw new PriceServiceException();
+        }
     }
 
 

@@ -5,6 +5,9 @@ import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.variables.IntVar;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SmartGridSolver {
 
@@ -14,93 +17,59 @@ public class SmartGridSolver {
 
     boolean onlySingleShifting = false;
 
-    public SmartGridSolver(int maxBound){
+    public SmartGridSolver(int maxBound) {
         UB = maxBound;
         LB = -maxBound;
     }
 
     /**
-     *
      * @param maxBound
      * @param onlySingleShifting Set to true improves the performance in so cases
      */
-    public SmartGridSolver(int maxBound,boolean onlySingleShifting){
+    public SmartGridSolver(int maxBound, boolean onlySingleShifting) {
         UB = maxBound;
         LB = -maxBound;
         this.onlySingleShifting = onlySingleShifting;
     }
+
     public static final int CONVERT_TO_KW = 1000;
 
+    public List<Integer> convertToIntegerList(int[] intArray) {
+        return Arrays.stream(intArray).boxed().collect(Collectors.toList());
+    }
+
     public SmartGridSolverSolution solve(int[] supplerSummedForEachHour,
-                                                int[] consumer1, int demandFlexibilityAsPartsOfHundred1,
-                                                int[] consumer2, int demandFlexibilityAsPartsOfHundred2,
-                                                int[] exportPricePerUnit, int[] importCostPerUnit, Battery batterie,
-                                                int efficiencyChargingAsPartsOfHundred) {
+                                         int[] consumer1, int demandFlexibilityAsPartsOfHundred1,
+                                         int[] consumer2, int demandFlexibilityAsPartsOfHundred2,
+                                         int[] exportPricePerUnit, int[] importCostPerUnit, Battery battery,
+                                         int efficiencyChargingAsPartsOfHundred) {
 
-        //Inputs
-        //int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-        //int[] consumer1 = new int[]{10, 10, 10, 10};
-        //int[] consumer2 = new int[]{20, 20, 20, 20};
-        //int[] exportPricePerUnit = new int[]{5,5,5,5};
-        //int[] importCostPerUnit = new int[]{4, 4, 4, 4};
-/*            int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{5,5,5,5};
-            int[] importCostPerUnit = new int[]{4, 4, 4, 4};*/
+        List<Integer> allNumbers = convertToIntegerList(supplerSummedForEachHour);
+        allNumbers.addAll(convertToIntegerList(consumer1));
+        allNumbers.addAll(convertToIntegerList(consumer2));
+        allNumbers.addAll(convertToIntegerList(exportPricePerUnit));
+        allNumbers.addAll(convertToIntegerList(importCostPerUnit));
 
-/*            int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{5,5,5,5};
-            int[] importCostPerUnit = new int[]{5, 5, 5, 5};*/
-
-
-        //Er sollte so viel wie möglich weg schiften
-            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{10,5,5,5};
-            int[] importCostPerUnit = new int[]{5, 5, 5, 5};*/
-
-            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{20,5,5,5};
-            int[] importCostPerUnit = new int[]{1, 5, 5, 5};*/
-
-            /*int[] supplerSummedForEachHour = new int[]{50, 29, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{5,5,5,5};
-            int[] importCostPerUnit = new int[]{5, 5, 5, 5};+/
-
-            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,50};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{20,5,5,5};
-            int[] importCostPerUnit = new int[]{1, 5, 5, 5};*/
-
-            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,0};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{20, 20, 20, 20};
-            int[] exportPricePerUnit = new int[]{20,5,5,5};
-            int[] importCostPerUnit = new int[]{1, 5, 5, 100};*/
-
-            /*int[] supplerSummedForEachHour = new int[]{50, 50, 50,0};
-            int[] consumer1 = new int[]{10, 10, 10, 10};
-            int[] consumer2 = new int[]{10, 10, 10, 10};
-            int[] exportPricePerUnit = new int[]{5,5,5,5};
-            int[] importCostPerUnit = new int[]{80, 80, 80, 80};*/
+        allNumbers.forEach(number -> {
+            if (number > UB || number < LB)
+                throw new IllegalArgumentException("Please use values in the range of " + LB + " to " + UB);
+        });
 
 
         int profitMultiplicator = Math.max(Arrays.stream(exportPricePerUnit).max().getAsInt(), Arrays.stream(importCostPerUnit).max().getAsInt());
 
         int inputSize = supplerSummedForEachHour.length;
 
-        int maximumStoredEnergy = (int) batterie.getMaximumStoredEnergy() / CONVERT_TO_KW; //20;
-        int maximumChargingRate = (int) batterie.getMaximumChargingRate() / CONVERT_TO_KW;// 5;
-        int maximumDischargingRate = (int) batterie.getMaximumDischargingRate() / CONVERT_TO_KW;
+        int maximumStoredEnergy = 0;
+        int maximumChargingRate = 0;
+        int maximumDischargingRate = 0;
+
+        if (battery != null) {
+            maximumStoredEnergy = (int) battery.getMaximumStoredEnergy() / CONVERT_TO_KW; //20;
+            maximumChargingRate = (int) battery.getMaximumChargingRate() / CONVERT_TO_KW;// 5;
+            maximumDischargingRate = (int) battery.getMaximumDischargingRate() / CONVERT_TO_KW;
+        }
+
         //int efficiencyFractionsOfHundred = batterie.get;
 
         Model smartGridModel = new Model("smartGridModel");
@@ -184,7 +153,7 @@ public class SmartGridSolver {
             isShiftingPos1[index] = smartGridModel.intVar("isShiftingPos1_" + index, 0, 1);
             isShifitingNeg1[index] = smartGridModel.intVar("isShifitingNeg1_" + index, 0, 1);
 
-            if(onlySingleShifting) {
+            if (onlySingleShifting) {
                 smartGridModel.ifThenElse(isPosShifitingConstraint1, smartGridModel.arithm(isShiftingPos1[index], "=", 1), smartGridModel.arithm(isShiftingPos1[index], "=", 0));
                 smartGridModel.ifThenElse(isNegShifitingConstraint1, smartGridModel.arithm(isShifitingNeg1[index], "=", 1), smartGridModel.arithm(isShifitingNeg1[index], "=", 0));
             }
@@ -202,7 +171,7 @@ public class SmartGridSolver {
             isShiftingPos2[index] = smartGridModel.intVar("isShiftingPos2_" + index, 0, 1);
             isShifitingNeg2[index] = smartGridModel.intVar("isShifitingNeg2_" + index, 0, 1);
 
-            if(onlySingleShifting) {
+            if (onlySingleShifting) {
                 smartGridModel.ifThenElse(isPosShifitingConstraint2, smartGridModel.arithm(isShiftingPos2[index], "=", 1), smartGridModel.arithm(isShiftingPos2[index], "=", 0));
                 smartGridModel.ifThenElse(isNegShifitingConstraint2, smartGridModel.arithm(isShifitingNeg2[index], "=", 1), smartGridModel.arithm(isShifitingNeg2[index], "=", 0));
             }
@@ -288,9 +257,12 @@ public class SmartGridSolver {
                 int[] PnegShift = new int[2];
                 PnegShift[0] = PnegShift1[index].getValue();
                 PnegShift[1] = PnegShift2[index].getValue();
+                int[] Pd = new int[2];
+                Pd[0] = consum1OfEachHourConstants[index].getValue();
+                Pd[1] = consum2OfEachHourConstants[index].getValue();
                 SmartGridSolverSolutionStep smartGridSolverSolutionStep = new SmartGridSolverSolutionStep(Pg[index].getValue(),
                         PposShift, PnegShift, exportProfitPerHour[index].getValue(), importCostPerHour[index].getValue(),
-                        batteryFillLevelPerHour[index].getValue(), dischargeRatePerHour[index].getValue(), chargeRatePerHour[index].getValue());
+                        batteryFillLevelPerHour[index].getValue(), dischargeRatePerHour[index].getValue(), chargeRatePerHour[index].getValue(), Pd, supplerSummdOfEachHourConstants[index].getValue());
                 smartGridSolverSolution.addSmartGridSolverSolutionStep(smartGridSolverSolutionStep);
             }
             System.out.println("---------------------------------------------");

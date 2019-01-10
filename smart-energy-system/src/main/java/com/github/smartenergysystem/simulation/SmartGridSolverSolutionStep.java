@@ -10,8 +10,10 @@ public class SmartGridSolverSolutionStep {
     private int batteryFillLevel;
     private int discargeRate;
     private int chargeRate;
+    private int[] Pd;
+    private int Ps;
 
-    public SmartGridSolverSolutionStep(int pg, int[] pposShift, int[] pnegShift, int exportProfit, int importCost, int batteryFillLevel, int discargeRate, int chargeRate) {
+    public SmartGridSolverSolutionStep(int pg, int[] pposShift, int[] pnegShift, int exportProfit, int importCost, int batteryFillLevel, int discargeRate, int chargeRate, int[] pd, int ps) {
         Pg = pg;
         PposShift = pposShift;
         PnegShift = pnegShift;
@@ -20,8 +22,25 @@ public class SmartGridSolverSolutionStep {
         this.batteryFillLevel = batteryFillLevel;
         this.discargeRate = discargeRate;
         this.chargeRate = chargeRate;
+        Pd = pd;
+        Ps = ps;
     }
 
+    public int getPs() {
+        return Ps;
+    }
+
+    public void setPs(int ps) {
+        Ps = ps;
+    }
+
+    public int[] getPd() {
+        return Pd;
+    }
+
+    public void setPd(int[] pd) {
+        Pd = pd;
+    }
 
 
     public int getPg() {

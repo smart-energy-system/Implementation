@@ -1,4 +1,4 @@
-package com.github.smartenergysystem.price.collector.priceCollector;
+package com.github.smartenergysystem.simulation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,23 +9,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
 
-@Entity
-@Table(name = "DAY_AHEAD_PRICE_POINT")
 public class DayAheadPricePoint {
-
-
-
 
     public DayAheadPricePoint() {
     }
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mmZ", timezone= "UTC")
-    @Id
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmZ", timezone = "UTC")
     private Date time;
     private double priceInEuroPerMWh;
 
-    @JsonInclude()
-    @Transient
     private boolean isOldValue = false;
 
     public boolean isOldValue() {

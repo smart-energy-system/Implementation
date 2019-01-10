@@ -23,7 +23,10 @@ public class SolverController {
     ISimulationControllerService simulationControllerService;
 
     @GetMapping("/solver")
-    public SmartGridSolverSolution solver(@RequestParam(name = "calculationBound", defaultValue = "100") int calculationBound) {
-       return simulationControllerService.solve(calculationBound);
+    public SmartGridSolverSolution solver(@RequestParam(name = "calculationBound", defaultValue = "100") int calculationBound,
+    @RequestParam(name = "exportPrice", defaultValue = "4") int exportPrice,
+    @RequestParam(name = "efficiencyChargingAsPartsOfHundred", defaultValue = "80") int efficiencyChargingAsPartsOfHundred) {
+
+       return simulationControllerService.solve(calculationBound,exportPrice,efficiencyChargingAsPartsOfHundred);
     }
 }

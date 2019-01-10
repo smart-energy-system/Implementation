@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 
 @RestController
 public class PriceCollectorController {
-    
+
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm'Z'";
     private static final int DAY_OFFSET = 5;
     @Value("${entsoe.securityToken}")
@@ -32,6 +32,12 @@ public class PriceCollectorController {
     PriceRepository repository;
     private Logger logger = LoggerFactory.getLogger(PriceCollectorController.class);
 
+    /**
+     * Solves A4.3
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @ApiOperation(value = "Inputs are always UTC and use the pattern " + DATE_PATTERN)
     @GetMapping("/prices")
     public ResponseEntity<List<DayAheadPricePoint>> getDayAheadPrices(@ApiParam(name = "startDate", value = "The start date", defaultValue = "2019-01-07T00:00Z")
