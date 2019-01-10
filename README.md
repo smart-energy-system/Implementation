@@ -16,6 +16,7 @@ Import this project in the IDE of your choice too. To be able to use the compone
 Please follow the documentation of the [ENRSO-E REST API](https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html) to obtain a token.
 With a valid token make a copy of the file credentials.template.properties (`priceCollector\src\main\resources`) and replace `<token>` with your token.
 Then remove the word `template` form the name of your copy. You may also want to make adjustments to the bidding zone. The setting is located in application.properties.
+The auto-fetch feature which updates the local database can also be configured in application.properties. 
 
 
 # Usage
