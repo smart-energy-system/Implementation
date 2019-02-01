@@ -9,11 +9,11 @@ import io.swagger.annotations.ApiModelProperty;
 public abstract class PositionEntity {
 	
 	@Column(name = "lat")
-	@ApiModelProperty(required = true, example = "48.77066367")
+	@ApiModelProperty(required = true, example = "47.77066367")
 	protected double latitude;
 	
 	@Column(name = "lon")
-	@ApiModelProperty(required = true, example = "9.16947372")
+	@ApiModelProperty(required = true, example = "8.16947372")
 	protected double longitude;
 	
 	public double getLatitude() {

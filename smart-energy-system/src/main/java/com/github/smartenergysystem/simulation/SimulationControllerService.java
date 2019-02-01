@@ -63,8 +63,8 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Override
     public synchronized Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel) {
-        WeatherResponse weatherResponse = registerForWeatherData(photovoltaicPanel.getLatitude(),
-                photovoltaicPanel.getLongitude());
+        //WeatherResponse weatherResponse = registerForWeatherData(photovoltaicPanel.getLatitude(),
+          //      photovoltaicPanel.getLongitude());
         photovoltaicPanelsId++;
         photovoltaicPanels.put(photovoltaicPanelsId, photovoltaicPanel);
         return photovoltaicPanelsId;
@@ -81,7 +81,7 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Override
     public synchronized Long addWindTurbine(WindTurbine windTurbine) {
-        registerForWeatherData(windTurbine.getLatitude(), windTurbine.getLongitude());
+        //registerForWeatherData(windTurbine.getLatitude(), windTurbine.getLongitude());
         windTurbineId++;
         getWindTurbines().put(windTurbineId, windTurbine);
         return windTurbineId;
@@ -295,6 +295,11 @@ public class SimulationControllerService implements ISimulationControllerService
         homeBuildingId++;
         homeBuildings.put(homeBuildingId, home);
         return homeBuildingId;
+    }
+
+    @Override
+    public synchronized void deleteHome(long id) {
+        homeBuildings.remove(id);
     }
 
     @Override

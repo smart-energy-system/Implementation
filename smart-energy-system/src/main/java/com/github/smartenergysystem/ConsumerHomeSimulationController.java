@@ -4,13 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.github.smartenergysystem.model.ConsumerWithIdDTO;
 import com.github.smartenergysystem.simulation.Home;
@@ -54,6 +48,11 @@ public class ConsumerHomeSimulationController {
 	@PutMapping("/{id}/hourlyBaseDemandPerSquareMeter")
 	public void sethourlyBaseDemandPerSquareMeter(@PathVariable("id") long id,@RequestBody double[] hourlyBaseDemandPerSquareMeter) {
 		simulationControllerService.setHomeBuildingsHourlyBaseDemandPerSquareMeter(id, hourlyBaseDemandPerSquareMeter);
+	}
+
+	@DeleteMapping("/{id}")
+	public void deleteConsumer(@PathVariable("id") long id) {
+		simulationControllerService.deleteHome(id);
 	}
 
 
