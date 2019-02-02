@@ -268,6 +268,11 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     @Override
+    public void deleteOfficeBuilding(long id) {
+        officeBuildings.remove(id);
+    }
+
+    @Override
     public synchronized OfficeBuilding getOfficeBuilding(Long id) {
         isIdValid(id, officeBuildings);
         return officeBuildings.get(id);
@@ -301,6 +306,7 @@ public class SimulationControllerService implements ISimulationControllerService
     public synchronized void deleteHome(long id) {
         homeBuildings.remove(id);
     }
+
 
     @Override
     public synchronized Home getHomeBuilding(long id) {

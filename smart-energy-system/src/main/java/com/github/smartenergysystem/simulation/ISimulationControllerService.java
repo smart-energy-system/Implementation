@@ -36,4 +36,6 @@ public interface ISimulationControllerService {
 	public SmartGridSolverSolution solve(int calculationBound, int exportPrice, int efficiencyChargingAsPartsOfHundred);
 
 	public void deleteHome(long id);
+
+	public void deleteOfficeBuilding(long id);
 }
