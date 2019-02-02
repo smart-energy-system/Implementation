@@ -38,4 +38,6 @@ public interface ISimulationControllerService {
 	public void deleteHome(long id);
 
 	public void deleteOfficeBuilding(long id);
+
+	public void deletePhotovoltaicPanel(long id);
 }

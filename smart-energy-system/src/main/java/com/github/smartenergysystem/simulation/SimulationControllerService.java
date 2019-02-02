@@ -273,6 +273,11 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     @Override
+    public void deletePhotovoltaicPanel(long id) {
+        photovoltaicPanels.remove(id);
+    }
+
+    @Override
     public synchronized OfficeBuilding getOfficeBuilding(Long id) {
         isIdValid(id, officeBuildings);
         return officeBuildings.get(id);
