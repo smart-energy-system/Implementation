@@ -1,17 +1,13 @@
 package com.github.smartenergysystem;
 
-import com.github.smartenergysystem.model.WindTurbineWithIdDTO;
-import com.github.smartenergysystem.simulation.ISimulationControllerService;
+import com.github.smartenergysystem.services.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.SmartGridSolverSolution;
-import com.github.smartenergysystem.simulation.WindTurbine;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 @RestController
 @Api(produces ="application/json",tags = { SwaggerConfig.SOLVER_TAG_NAME})
 @RequestMapping()

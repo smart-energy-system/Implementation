@@ -2,6 +2,7 @@ package com.github.smartenergysystem;
 
 import java.util.Map;
 
+import com.github.smartenergysystem.services.PhotovoltaicPanelsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInput;
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
-import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import io.swagger.annotations.Api;
 
@@ -19,11 +19,11 @@ import io.swagger.annotations.Api;
 public class SupplierPhotovoltaicPanelSimulationController {
 
 	@Autowired
-	ISimulationControllerService simulationControllerService;
+	PhotovoltaicPanelsService photovoltaicPanelsService;
 
 	@PostMapping("/photovoltaicPanels")
 	public PhotovoltaicPanelWithIdDTO addPhotovoltaicPanel(@RequestBody PhotovoltaicPanel photovoltaicPanel) {
-		Long id = simulationControllerService.addPhotovoltaicPanel(photovoltaicPanel);
+		Long id = photovoltaicPanelsService.addPhotovoltaicPanel(photovoltaicPanel);
 		PhotovoltaicPanelWithIdDTO photovoltaicPanelWithIdDTO = new PhotovoltaicPanelWithIdDTO();
 		BeanUtils.copyProperties(photovoltaicPanel, photovoltaicPanelWithIdDTO);
 		photovoltaicPanelWithIdDTO.setId(id);
@@ -32,34 +32,34 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	
 	@GetMapping("/photovoltaicPanels")
 	public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels() {
-		Map<Long,PhotovoltaicPanel> panels = simulationControllerService.getPhotovoltaicPanels();
+		Map<Long,PhotovoltaicPanel> panels = photovoltaicPanelsService.getPhotovoltaicPanels();
 		return panels;
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}")
 	public PhotovoltaicPanel getPhotovoltaicPanel(@PathVariable("id") long id) {
-		return simulationControllerService.getPhotovoltaicPanel(id);		
+		return photovoltaicPanelsService.getPhotovoltaicPanel(id);
 	}
 
 	@PostMapping("/photovoltaicPanels/{id}/energyOutput")
 	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id,@RequestBody PhotovoltaicPanelEnergyComuptationInput panelEnergyComuptationInput) {
-		PhotovoltaicPanel photovoltaicPanel = simulationControllerService.getPhotovoltaicPanel(id);
+		PhotovoltaicPanel photovoltaicPanel = photovoltaicPanelsService.getPhotovoltaicPanel(id);
 		return photovoltaicPanel.computeEnergyGenerated(panelEnergyComuptationInput.getTemperatureInCelsius(), panelEnergyComuptationInput.getSunpowerHorizontal(), panelEnergyComuptationInput.getDayOfYear());		
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}/energyOutput")
 	public double getPhotovoltaicPanelEnergyOutput(@PathVariable("id") long id) {
-		return simulationControllerService.computeEnergyGeneratedPhotovoltaicPanel(id);
+		return photovoltaicPanelsService.computeEnergyGeneratedPhotovoltaicPanel(id);
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
 	public EnergyForecast getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id,@RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
-		return simulationControllerService.computeEnergyGenerateForecastPhotovoltaicPanel(id, maxTimestampOffset);
+		return photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(id, maxTimestampOffset);
 	}
 
 	@DeleteMapping("/photovoltaicPanels/{id}")
 	public void deletePanel(@PathVariable("id") long id) {
-		simulationControllerService.deletePhotovoltaicPanel(id);
+		photovoltaicPanelsService.deletePhotovoltaicPanel(id);
 	}
 	
 

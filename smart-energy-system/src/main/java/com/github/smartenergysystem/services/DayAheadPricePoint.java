@@ -1,12 +1,7 @@
-package com.github.smartenergysystem.simulation;
+package com.github.smartenergysystem.services;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Date;
 
 public class DayAheadPricePoint {

@@ -2,14 +2,13 @@ package com.github.smartenergysystem;
 
 import java.util.Map;
 
+import com.github.smartenergysystem.services.HomesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.smartenergysystem.model.ConsumerWithIdDTO;
 import com.github.smartenergysystem.simulation.Home;
-import com.github.smartenergysystem.simulation.ISimulationControllerService;
-import com.github.smartenergysystem.simulation.OfficeBuilding;
 
 import io.swagger.annotations.Api;
 
@@ -19,11 +18,11 @@ import io.swagger.annotations.Api;
 public class ConsumerHomeSimulationController {
 	
 	@Autowired
-	ISimulationControllerService simulationControllerService;
+	HomesService homesService;
 	
 	@PostMapping()
 	public ConsumerWithIdDTO addHomeBuilding(@RequestBody Home home) {
-		Long id = simulationControllerService.addHomeBuilding(home);
+		Long id = homesService.addHomeBuilding(home);
 		ConsumerWithIdDTO consumerWithIdDTO = new ConsumerWithIdDTO();
 		BeanUtils.copyProperties(home, consumerWithIdDTO);
 		consumerWithIdDTO.setId(id);
@@ -32,27 +31,27 @@ public class ConsumerHomeSimulationController {
 	
 	@GetMapping("/{id}")
 	public Home getHomeBuilding(@PathVariable("id") long id) {
-		return simulationControllerService.getHomeBuilding(id);	
+		return homesService.getHomeBuilding(id);
 	}
 	
 	@GetMapping()
 	public Map<Long,Home> getHomeBuildings() {
-		return simulationControllerService.getHomeBuildings();	
+		return homesService.getHomeBuildings();
 	}
 	
 	@GetMapping("/{id}/energyDemand/{hourOfTheDay}")
 	public double getHomeBuildingDemand(@PathVariable("id") long id,@PathVariable("hourOfTheDay") int hourOfTheDay) {
-		return simulationControllerService.computeHomeBuildingDemand(id, hourOfTheDay);
+		return homesService.computeHomeBuildingDemand(id, hourOfTheDay);
 	}
 	
 	@PutMapping("/{id}/hourlyBaseDemandPerSquareMeter")
 	public void sethourlyBaseDemandPerSquareMeter(@PathVariable("id") long id,@RequestBody double[] hourlyBaseDemandPerSquareMeter) {
-		simulationControllerService.setHomeBuildingsHourlyBaseDemandPerSquareMeter(id, hourlyBaseDemandPerSquareMeter);
+		homesService.setHomeBuildingsHourlyBaseDemandPerSquareMeter(id, hourlyBaseDemandPerSquareMeter);
 	}
 
 	@DeleteMapping("/{id}")
 	public void deleteConsumer(@PathVariable("id") long id) {
-		simulationControllerService.deleteHome(id);
+		homesService.deleteHome(id);
 	}
 
 

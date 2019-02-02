@@ -1,6 +1,8 @@
 package com.github.smartenergysystem;
 
 import java.util.Map;
+
+import com.github.smartenergysystem.services.WindTurbineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.model.WindTurbineEnergyComputationInput;
 import com.github.smartenergysystem.model.WindTurbineWithIdDTO;
-import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.WindTurbine;
 
 import io.swagger.annotations.Api;
@@ -25,11 +26,11 @@ public class SupplierWindTurbineSimulationController {
 	Logger logger = LoggerFactory.getLogger(SupplierWindTurbineSimulationController.class);
 	
 	@Autowired
-	ISimulationControllerService simulationControllerService;
+	WindTurbineService windTurbineService;
 
 	@PostMapping("/windTurbines")
 	public WindTurbine addWindTurbine(@RequestBody WindTurbine windTurbine) {
-		Long id = simulationControllerService.addWindTurbine(windTurbine);
+		Long id = windTurbineService.addWindTurbine(windTurbine);
 		WindTurbineWithIdDTO windTurbineWithIdDTO = new WindTurbineWithIdDTO();
 		BeanUtils.copyProperties(windTurbine, windTurbineWithIdDTO);
 		windTurbineWithIdDTO.setId(id);
@@ -38,20 +39,20 @@ public class SupplierWindTurbineSimulationController {
 	
 	@GetMapping("/windTurbines")
 	public Map<Long,WindTurbine> getWindTurbines() {
-		Map<Long,WindTurbine> turbines = simulationControllerService.getWindTurbines();
+		Map<Long,WindTurbine> turbines = windTurbineService.getWindTurbines();
 		return turbines;
 	}
 	
 	@GetMapping("/windTurbines/{id}")
 	public WindTurbine getWindTurbine(@PathVariable("id") long id) {
-		return simulationControllerService.getWindTurbine(id);		
+		return windTurbineService.getWindTurbine(id);
 	}
 	
 	@ApiOperation(value = "Returns the energy output for the given input parameters.")
 	@PostMapping("/windTurbines/{id}/energyOutput")
 	public double getWindTurbineEnergyOutput(@PathVariable("id") long id,
 			@RequestBody WindTurbineEnergyComputationInput windTurbineEnergyComputationInput) {
-		WindTurbine turbine = simulationControllerService.getWindTurbine(id);
+		WindTurbine turbine = windTurbineService.getWindTurbine(id);
 		return turbine.computeEnergyGenerated(windTurbineEnergyComputationInput.getWindSpeed(),
 				windTurbineEnergyComputationInput.getMeassuredAirPressureInPascal(),
 				windTurbineEnergyComputationInput.getRelativeHumidity(),
@@ -61,7 +62,7 @@ public class SupplierWindTurbineSimulationController {
 	@ApiOperation(value = "Returns the energy output for the most recent values from the database")
 	@GetMapping("/windTurbines/{id}/energyOutput")
 	public double getWindTurbineEnergyOutput(@PathVariable("id") long id) {
-		return simulationControllerService.computeEnergyGeneratedWindTurbine(id);
+		return windTurbineService.computeEnergyGeneratedWindTurbine(id);
 	}
 	
 	@ApiOperation("Returns the forecast for the production")
@@ -69,12 +70,12 @@ public class SupplierWindTurbineSimulationController {
 	public EnergyForecast getWindTurbineEnergyOutputForecast(@PathVariable("id") long id,@RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
 		System.out.println(Long.MAX_VALUE);
 		logger.trace("Request to WindTubine getWindTurbineEnergyOutputForecast");
-		return simulationControllerService.computeEnergyGenerateForecastWindTurbine(id,maxTimestampOffset);
+		return windTurbineService.computeEnergyGenerateForecastWindTurbine(id,maxTimestampOffset);
 	}
 
 	@DeleteMapping("/windTurbines/{id}")
 	public void deleteTurbine(@PathVariable("id") long id) {
-		simulationControllerService.deleteWindTurbine(id);
+		windTurbineService.deleteWindTurbine(id);
 	}
 
 }
