@@ -136,9 +136,9 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     private synchronized WeatherHistory getMostRecentWeatherHistoryForSupplier(Long id,
-                                                                               HashMap<Long, ? extends PositionEntity> entityList) {
+                                                                               HashMap<Long, ? extends Entity> entityList) {
         if (entityList.containsKey(id)) {
-            PositionEntity entity = entityList.get(id);
+            Entity entity = entityList.get(id);
             logger.debug("Requesting most recent weather data for entity " + id);
             WeatherHistory weatherHistory = weatherForecastRepository
                     .findFirstByLatitudeAndLongitudeOrderByTimestampDesc(entity.getLatitude(), entity.getLongitude());
@@ -207,9 +207,9 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     private synchronized List<WeatherForecast> getWeatherForecastForSupplier(Long id, long maxTimestampOffset,
-                                                                             HashMap<Long, ? extends PositionEntity> entityList) {
+                                                                             HashMap<Long, ? extends Entity> entityList) {
         if (entityList.containsKey(id)) {
-            PositionEntity entity = entityList.get(id);
+            Entity entity = entityList.get(id);
             logger.debug("Requesting forecast data for entity " + id);
             List<WeatherForecast> weatherForecastList = weatherForecastRepository
                     .findByLatitudeAndLongitudeAndTimestampLessThan(entity.getLatitude(), entity.getLongitude(),

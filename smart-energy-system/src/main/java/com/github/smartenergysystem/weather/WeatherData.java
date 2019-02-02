@@ -3,11 +3,11 @@ package com.github.smartenergysystem.weather;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import com.github.smartenergysystem.simulation.PositionEntity;
+import com.github.smartenergysystem.simulation.Entity;
 import com.github.smartenergysystem.simulation.WindTurbine;
 
 @MappedSuperclass
-public class WeatherData extends PositionEntity {
+public class WeatherData extends Entity {
 	
 	@Id
 	@Column(name = "id")

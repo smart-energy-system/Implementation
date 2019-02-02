@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class WindTurbine extends PositionEntity {
+public class WindTurbine extends Entity {
 	
 	Logger logger = LoggerFactory.getLogger(WindTurbine.class);
 	

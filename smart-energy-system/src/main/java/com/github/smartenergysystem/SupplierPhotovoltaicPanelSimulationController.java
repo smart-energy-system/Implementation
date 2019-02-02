@@ -11,7 +11,6 @@ import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInpu
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.ISimulationControllerService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
-import com.github.smartenergysystem.simulation.PositionEntity;
 import io.swagger.annotations.Api;
 
 @RestController

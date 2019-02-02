@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class PhotovoltaicPanel extends PositionEntity {
+public class PhotovoltaicPanel extends Entity {
 	
 	private static final int CONVERT_W_TO_KW = 1000;
 

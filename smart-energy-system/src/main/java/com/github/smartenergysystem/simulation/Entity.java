@@ -6,7 +6,7 @@ import javax.persistence.MappedSuperclass;
 import io.swagger.annotations.ApiModelProperty;
 
 @MappedSuperclass
-public abstract class PositionEntity {
+public abstract class Entity {
 	
 	@Column(name = "lat")
 	@ApiModelProperty(required = true, example = "47.77066367")
@@ -15,6 +15,8 @@ public abstract class PositionEntity {
 	@Column(name = "lon")
 	@ApiModelProperty(required = true, example = "8.16947372")
 	protected double longitude;
+
+	protected String displayName;
 	
 	public double getLatitude() {
 		return latitude;
@@ -28,7 +30,12 @@ public abstract class PositionEntity {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
-	
-	
 
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 }

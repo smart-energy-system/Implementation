@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class Consumer{
+public class Consumer extends Entity {
 	
 	private double[] hourlyBaseDemandPerSquareMeter;
 	@ApiModelProperty(required = true, example = "1000")
