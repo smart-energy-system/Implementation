@@ -278,6 +278,11 @@ public class SimulationControllerService implements ISimulationControllerService
     }
 
     @Override
+    public void deleteWindTurbine(long id) {
+        windTurbines.remove(id);
+    }
+
+    @Override
     public synchronized OfficeBuilding getOfficeBuilding(Long id) {
         isIdValid(id, officeBuildings);
         return officeBuildings.get(id);
