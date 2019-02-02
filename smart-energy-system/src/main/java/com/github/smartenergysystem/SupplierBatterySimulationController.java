@@ -5,12 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.github.smartenergysystem.model.BatteryWithIdDTO;
 import com.github.smartenergysystem.model.ChargeProcessInput;
@@ -52,4 +47,8 @@ public class SupplierBatterySimulationController {
 		return simulationControllerService.computebatteryChargeProcess(id, chargeProcessInput);	
 	}
 
+	@DeleteMapping("/batteries/{id}")
+	public void deleteBatteries(@PathVariable("id") long id) {
+		simulationControllerService.deleteBatterie(id);
+	}
 }

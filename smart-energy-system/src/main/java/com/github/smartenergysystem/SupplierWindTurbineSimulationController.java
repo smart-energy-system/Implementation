@@ -73,7 +73,7 @@ public class SupplierWindTurbineSimulationController {
 	}
 
 	@DeleteMapping("/windTurbines/{id}")
-	public void deleteConsumer(@PathVariable("id") long id) {
+	public void deleteTurbine(@PathVariable("id") long id) {
 		simulationControllerService.deleteWindTurbine(id);
 	}
 

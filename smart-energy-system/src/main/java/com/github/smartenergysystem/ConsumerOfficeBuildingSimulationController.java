@@ -48,7 +48,7 @@ public class ConsumerOfficeBuildingSimulationController {
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteConsumer(@PathVariable("id") long id) {
+	public void deleteOfficeBuilding(@PathVariable("id") long id) {
 		simulationControllerService.deleteOfficeBuilding(id);
 	}
 

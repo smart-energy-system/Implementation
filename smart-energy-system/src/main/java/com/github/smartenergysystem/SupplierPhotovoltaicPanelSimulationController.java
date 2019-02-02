@@ -59,7 +59,7 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 
 	@DeleteMapping("/photovoltaicPanels/{id}")
-	public void deleteConsumer(@PathVariable("id") long id) {
+	public void deletePanel(@PathVariable("id") long id) {
 		simulationControllerService.deletePhotovoltaicPanel(id);
 	}
 	

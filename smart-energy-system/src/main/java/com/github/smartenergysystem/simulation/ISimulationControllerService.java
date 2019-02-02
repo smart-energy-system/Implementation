@@ -42,4 +42,6 @@ public interface ISimulationControllerService {
 	public void deletePhotovoltaicPanel(long id);
 
 	public void deleteWindTurbine(long id);
+
+	public void deleteBatterie(long id);
 }
