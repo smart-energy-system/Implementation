@@ -78,4 +78,8 @@ public class WindTurbineService extends EntityService {
     public void deleteWindTurbine(long id) {
         windTurbines.remove(id);
     }
+
+    public void putWindTurbine(long id, WindTurbine windTurbine) {
+        windTurbines.put(id,windTurbine);
+    }
 }

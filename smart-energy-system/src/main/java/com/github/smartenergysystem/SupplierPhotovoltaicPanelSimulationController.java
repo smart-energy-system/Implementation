@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.services.PhotovoltaicPanelsService;
+import com.github.smartenergysystem.simulation.Battery;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,11 @@ public class SupplierPhotovoltaicPanelSimulationController {
 		BeanUtils.copyProperties(photovoltaicPanel, photovoltaicPanelWithIdDTO);
 		photovoltaicPanelWithIdDTO.setId(id);
 		return photovoltaicPanelWithIdDTO;
+	}
+
+	@PutMapping("/photovoltaicPanels/{id}")
+	public void putPhotovoltaicPanel(@PathVariable("id") long id, @RequestBody PhotovoltaicPanel photovoltaicPanel) {
+		photovoltaicPanelsService.putPhotovoltaicPanel(id,photovoltaicPanel);
 	}
 	
 	@GetMapping("/photovoltaicPanels")

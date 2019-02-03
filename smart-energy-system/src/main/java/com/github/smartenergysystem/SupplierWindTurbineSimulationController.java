@@ -3,6 +3,7 @@ package com.github.smartenergysystem;
 import java.util.Map;
 
 import com.github.smartenergysystem.services.WindTurbineService;
+import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +36,11 @@ public class SupplierWindTurbineSimulationController {
 		BeanUtils.copyProperties(windTurbine, windTurbineWithIdDTO);
 		windTurbineWithIdDTO.setId(id);
 		return windTurbineWithIdDTO;
+	}
+
+	@PutMapping("/windTurbines/{id}")
+	public void putWindTurbine(@PathVariable("id") long id, @RequestBody WindTurbine windTurbine) {
+		windTurbineService.putWindTurbine(id,windTurbine);
 	}
 	
 	@GetMapping("/windTurbines")

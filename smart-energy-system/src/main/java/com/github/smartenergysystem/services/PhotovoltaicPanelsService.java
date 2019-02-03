@@ -85,4 +85,8 @@ public class PhotovoltaicPanelsService extends EntityService {
         return energyForecast;
 
     }
+
+    public void putPhotovoltaicPanel(long id, PhotovoltaicPanel photovoltaicPanel) {
+        photovoltaicPanels.put(id,photovoltaicPanel);
+    }
 }
