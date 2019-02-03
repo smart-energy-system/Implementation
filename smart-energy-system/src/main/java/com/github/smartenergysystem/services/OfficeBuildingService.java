@@ -40,4 +40,9 @@ public class OfficeBuildingService extends EntityService {
         isIdValid(id, officeBuildings);
         officeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
     }
+
+    public void putOffice(long id, OfficeBuilding officeBuilding) {
+        isIdValid(id, officeBuildings);
+        officeBuildings.put(id,officeBuilding);
+    }
 }

@@ -38,4 +38,9 @@ public class BatteryService  extends EntityService {
     public void deleteBatterie(long id) {
         batteries.remove(id);
     }
+
+    public void putBattery(long id, Battery battery) {
+        isIdValid(id, batteries);
+        batteries.put(id,battery);
+    }
 }

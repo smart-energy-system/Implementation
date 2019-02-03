@@ -2,6 +2,7 @@ package com.github.smartenergysystem;
 
 import java.util.Map;
 
+import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.services.BatteryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,11 @@ public class SupplierBatterySimulationController {
 		BeanUtils.copyProperties(battery, batteryWithIdDTO);
 		batteryWithIdDTO.setId(id);
 		return batteryWithIdDTO;
+	}
+
+	@PutMapping("/batteries/{id}")
+	public void putBattery(@PathVariable("id") long id, @RequestBody Battery battery) {
+		batteryService.putBattery(id,battery);
 	}
 	
 	@GetMapping("/batteries/{id}")

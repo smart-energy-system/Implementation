@@ -2,6 +2,7 @@ package com.github.smartenergysystem;
 
 import java.util.Map;
 
+import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.services.PhotovoltaicPanelsService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,7 @@
 package com.github.smartenergysystem;
 import java.util.Map;
 
+import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.services.OfficeBuildingService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class ConsumerOfficeBuildingSimulationController {
 		BeanUtils.copyProperties(officeBuilding, consumerWithIdDTO);
 		consumerWithIdDTO.setId(id);
 		return consumerWithIdDTO;
+	}
+
+	@PutMapping("/{id}")
+	public void putOfficeBuilding(@PathVariable("id") long id,@RequestBody OfficeBuilding officeBuilding) {
+		officeBuildingService.putOffice(id,officeBuilding);
 	}
 	
 	@GetMapping("/{id}")

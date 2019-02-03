@@ -22,6 +22,10 @@ public class HomesService extends EntityService {
         homeBuildings.remove(id);
     }
 
+    public synchronized void putHome(long id, Home home){
+        homeBuildings.put(id,home);
+    }
+
 
     public synchronized Home getHomeBuilding(long id) {
         isIdValid(id, homeBuildings);
