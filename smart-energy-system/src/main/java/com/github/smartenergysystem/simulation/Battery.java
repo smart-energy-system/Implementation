@@ -2,7 +2,7 @@ package com.github.smartenergysystem.simulation;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class Battery {
+public class Battery extends Entity{
 
 	@ApiModelProperty(required = true, example = "12000")
 	private double maximumStoredEnergy;
