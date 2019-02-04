@@ -12,6 +12,8 @@ public class Battery extends Entity{
 	private double maximumDischargingRate;
 	@ApiModelProperty(required = true, example = "0")
 	private double storedEnergy;
+	@ApiModelProperty(required = true, example = "0")
+	private double chargingEfficiency;
 
 	/**
 	 * Solves A2.10
@@ -65,5 +67,13 @@ public class Battery extends Entity{
 
 	public double getMaximumDischargingRate() {
 		return maximumDischargingRate;
+	}
+
+	public double getChargingEfficiency() {
+		return chargingEfficiency;
+	}
+
+	public void setChargingEfficiency(double chargingEfficiency) {
+		this.chargingEfficiency = chargingEfficiency;
 	}
 }

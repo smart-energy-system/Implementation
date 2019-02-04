@@ -29,6 +29,7 @@ public class ChargeProcessInput {
 	public void setChargingEfficiency(double chargingEfficiency) {
 		this.chargingEfficiency = chargingEfficiency;
 	}
+
 	
 	
 }
