@@ -1,5 +1,8 @@
 package com.github.smartenergysystem;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
@@ -41,8 +44,17 @@ public class ConsumerHomeSimulationController {
 	}
 	
 	@GetMapping()
-	public Map<Long,Home> getHomeBuildings() {
-		return homesService.getHomeBuildings();
+	public List<ConsumerWithIdDTO> getHomeBuildings() {
+        Map<Long,Home> homes = homesService.getHomeBuildings();
+        List<ConsumerWithIdDTO> homesWithIds = new LinkedList<>();
+        for(Map.Entry<Long,Home> homeEntry : homes.entrySet()){
+            ConsumerWithIdDTO consumerWithIdDTO = new ConsumerWithIdDTO();
+            BeanUtils.copyProperties(homeEntry.getValue(), consumerWithIdDTO);
+            consumerWithIdDTO.setId(homeEntry.getKey());
+            homesWithIds.add(consumerWithIdDTO);
+        }
+        return homesWithIds;
+
 	}
 	
 	@GetMapping("/{id}/energyDemand/{hourOfTheDay}")

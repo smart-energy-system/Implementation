@@ -1,7 +1,10 @@
 package com.github.smartenergysystem;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.services.WindTurbineService;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import org.slf4j.Logger;
@@ -44,9 +47,16 @@ public class SupplierWindTurbineSimulationController {
 	}
 	
 	@GetMapping("/windTurbines")
-	public Map<Long,WindTurbine> getWindTurbines() {
-		Map<Long,WindTurbine> turbines = windTurbineService.getWindTurbines();
-		return turbines;
+	public List<WindTurbine> getWindTurbines() {
+		Map<Long, WindTurbine> windTurbines = windTurbineService.getWindTurbines();
+		List<WindTurbine> windTurbinesWithIds = new LinkedList<>();
+		for(Map.Entry<Long,WindTurbine> windTurbineEntry : windTurbines.entrySet()){
+			WindTurbineWithIdDTO windTurbineWithIdDTO = new WindTurbineWithIdDTO();
+			BeanUtils.copyProperties(windTurbineEntry.getValue(), windTurbineWithIdDTO);
+			windTurbineWithIdDTO.setId(windTurbineEntry.getKey());
+			windTurbinesWithIds.add(windTurbineWithIdDTO);
+		}
+		return windTurbinesWithIds;
 	}
 	
 	@GetMapping("/windTurbines/{id}")

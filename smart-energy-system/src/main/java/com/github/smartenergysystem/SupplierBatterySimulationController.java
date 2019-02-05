@@ -1,9 +1,13 @@
 package com.github.smartenergysystem;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
+import com.github.smartenergysystem.model.ConsumerWithIdDTO;
 import com.github.smartenergysystem.services.BatteryService;
+import com.github.smartenergysystem.simulation.OfficeBuilding;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +46,16 @@ public class SupplierBatterySimulationController {
 	}
 	
 	@GetMapping("/batteries")
-	public Map<Long,Battery> getBatterys() {
-		return batteryService.getBatterys();
+	public List<Battery> getBatterys() {
+		Map<Long, Battery> batteries = batteryService.getBatterys();
+		List<Battery> batteriesWithIds = new LinkedList<>();
+		for(Map.Entry<Long,Battery> batteryEntry : batteries.entrySet()){
+			BatteryWithIdDTO batteryWithIdDTO = new BatteryWithIdDTO();
+			BeanUtils.copyProperties(batteryEntry.getValue(), batteryWithIdDTO);
+			batteryWithIdDTO.setId(batteryEntry.getKey());
+			batteriesWithIds.add(batteryWithIdDTO);
+		}
+		return batteriesWithIds;
 	}
 	
 	@PostMapping("/batteries/{id}/ChargeProcess")

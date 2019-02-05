@@ -1,8 +1,11 @@
 package com.github.smartenergysystem;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
+import com.github.smartenergysystem.model.BatteryWithIdDTO;
 import com.github.smartenergysystem.services.PhotovoltaicPanelsService;
 import com.github.smartenergysystem.simulation.Battery;
 import org.springframework.beans.BeanUtils;
@@ -38,9 +41,16 @@ public class SupplierPhotovoltaicPanelSimulationController {
 	}
 	
 	@GetMapping("/photovoltaicPanels")
-	public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels() {
-		Map<Long,PhotovoltaicPanel> panels = photovoltaicPanelsService.getPhotovoltaicPanels();
-		return panels;
+	public List<PhotovoltaicPanel> getPhotovoltaicPanels() {
+		Map<Long, PhotovoltaicPanel> photovoltaicPanels = photovoltaicPanelsService.getPhotovoltaicPanels();
+		List<PhotovoltaicPanel> photovoltaicPanelsWithIds = new LinkedList<>();
+		for(Map.Entry<Long,PhotovoltaicPanel> photovoltaicPanelsEntry : photovoltaicPanels.entrySet()){
+			PhotovoltaicPanelWithIdDTO photovoltaicPanelWithIdDTO = new PhotovoltaicPanelWithIdDTO();
+			BeanUtils.copyProperties(photovoltaicPanelsEntry.getValue(), photovoltaicPanelWithIdDTO);
+			photovoltaicPanelWithIdDTO.setId(photovoltaicPanelsEntry.getKey());
+			photovoltaicPanelsWithIds.add(photovoltaicPanelWithIdDTO);
+		}
+		return photovoltaicPanelsWithIds;
 	}
 	
 	@GetMapping("/photovoltaicPanels/{id}")

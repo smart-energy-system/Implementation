@@ -1,8 +1,11 @@
 package com.github.smartenergysystem;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.services.OfficeBuildingService;
+import com.github.smartenergysystem.simulation.Home;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +42,16 @@ public class ConsumerOfficeBuildingSimulationController {
 	}
 	
 	@GetMapping()
-	public Map<Long,OfficeBuilding> getOfficeBuildings() {
-		return officeBuildingService.getOfficeBuildings();
+	public List<ConsumerWithIdDTO> getOfficeBuildings() {
+		Map<Long, OfficeBuilding> officeBuildings = officeBuildingService.getOfficeBuildings();
+		List<ConsumerWithIdDTO> officeWithIds = new LinkedList<>();
+		for(Map.Entry<Long,OfficeBuilding> officeEntry : officeBuildings.entrySet()){
+			ConsumerWithIdDTO consumerWithIdDTO = new ConsumerWithIdDTO();
+			BeanUtils.copyProperties(officeEntry.getValue(), consumerWithIdDTO);
+			consumerWithIdDTO.setId(officeEntry.getKey());
+			officeWithIds.add(consumerWithIdDTO);
+		}
+		return officeWithIds;
 	}
 	
 	@GetMapping("/{id}/energyDemand/{hourOfTheDay}")
