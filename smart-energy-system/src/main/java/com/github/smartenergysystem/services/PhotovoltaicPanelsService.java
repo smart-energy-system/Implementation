@@ -5,6 +5,7 @@ import com.github.smartenergysystem.model.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import com.github.smartenergysystem.weather.WeatherForecast;
 import com.github.smartenergysystem.weather.WeatherHistory;
+import com.github.smartenergysystem.weather.WeatherItem;
 import com.github.smartenergysystem.weather.WeatherResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class PhotovoltaicPanelsService extends EntityService {
     /**
      * Solves A2.9
      */
-    public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
+/*    public synchronized EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(Long id,
                                                                                       long maxTimestampOffset) {
         List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
                 photovoltaicPanels);
@@ -85,9 +86,28 @@ public class PhotovoltaicPanelsService extends EntityService {
         energyForecast.setForecast(forecast);
         return energyForecast;
 
-    }
+    }*/
 
     public void putPhotovoltaicPanel(long id, PhotovoltaicPanel photovoltaicPanel) {
         photovoltaicPanels.put(id,photovoltaicPanel);
+    }
+
+    /**
+     * Solves A2.9
+     */
+    public EnergyForecast computeEnergyGenerateForecastPhotovoltaicPanel(long id, Date startDate, Date endDate) {
+        List<WeatherItem> weatherForecastList = getWeatherForecastForSupplier(id, startDate,endDate, photovoltaicPanels);
+        PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
+        List<EnergyForecastPoint> forecast = new LinkedList<>();
+        weatherForecastList.forEach(weatherforecast -> {
+            double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
+                    weatherforecast.getGlobalHorizontalSolarIrradiance(),
+                    getDayOfTheYear(weatherforecast.getTimestamp()));
+            forecast.add(new EnergyForecastPoint(weatherforecast.getTimestamp(),energy));
+        });
+        EnergyForecast energyForecast = new EnergyForecast();
+        logger.debug("Size of generation forecast:" + forecast.size());
+        energyForecast.setForecast(forecast);
+        return energyForecast;
     }
 }

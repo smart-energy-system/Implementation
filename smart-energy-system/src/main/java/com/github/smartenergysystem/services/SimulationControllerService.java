@@ -51,13 +51,13 @@ public class SimulationControllerService implements ISimulationControllerService
         LinkedList<EnergyForecast> forecasts = new LinkedList<>();
         Map<Long, PhotovoltaicPanel> photovoltaicPanels = photovoltaicPanelsService.getPhotovoltaicPanels();
         for (Map.Entry<Long, PhotovoltaicPanel> entry : photovoltaicPanels.entrySet()) {
-            EnergyForecast energyForecast = photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
-            forecasts.add(energyForecast);
+            //TODO FIXME  BROKEN  EnergyForecast energyForecast = photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
+            //forecasts.add(energyForecast);
         }
         Map<Long, WindTurbine> windTurbines = windTurbineService.getWindTurbines();
         for (Map.Entry<Long, WindTurbine> entry : windTurbines.entrySet()) {
-            EnergyForecast energyForecast = windTurbineService.computeEnergyGenerateForecastWindTurbine(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
-            forecasts.add(energyForecast);
+            //TODO FIXME  BROKEN EnergyForecast energyForecast = windTurbineService.computeEnergyGenerateForecastWindTurbine(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
+            //forecasts.add(energyForecast);
         }
 
         for (EnergyForecast energyForecast : forecasts) {

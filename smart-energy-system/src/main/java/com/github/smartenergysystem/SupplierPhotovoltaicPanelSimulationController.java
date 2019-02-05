@@ -1,5 +1,6 @@
 package com.github.smartenergysystem;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +9,10 @@ import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.model.BatteryWithIdDTO;
 import com.github.smartenergysystem.services.PhotovoltaicPanelsService;
 import com.github.smartenergysystem.simulation.Battery;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import com.github.smartenergysystem.model.EnergyForecast;
@@ -17,6 +20,8 @@ import com.github.smartenergysystem.model.PhotovoltaicPanelEnergyComuptationInpu
 import com.github.smartenergysystem.model.PhotovoltaicPanelWithIdDTO;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import io.swagger.annotations.Api;
+
+import static com.github.smartenergysystem.SupplierWindTurbineSimulationController.DATE_PATTERN;
 
 @RestController
 @Api(produces ="application/json",tags = { SwaggerConfig.SUPPLIER_TAG_NAME})
@@ -69,9 +74,17 @@ public class SupplierPhotovoltaicPanelSimulationController {
 		return photovoltaicPanelsService.computeEnergyGeneratedPhotovoltaicPanel(id);
 	}
 	
-	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
+/*	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
 	public EnergyForecast getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id,@RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
 		return photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(id, maxTimestampOffset);
+	}*/
+
+	@GetMapping("/photovoltaicPanels/{id}/energyOutputForecast")
+	public EnergyForecast getPhotovoltaicPanelEnergyOutputForecast(@PathVariable("id") long id,@ApiParam(name = "startDate", value = "The start date", defaultValue = "2019-01-07T00:00Z")
+	@RequestParam("startDate") @DateTimeFormat(pattern = DATE_PATTERN) Date startDate,
+																   @ApiParam(name = "endDate", value = "The end date", defaultValue = "2019-01-07T23:00Z")
+																	   @RequestParam("endDate") @DateTimeFormat(pattern = DATE_PATTERN) Date endDate) {
+		return photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(id, startDate,endDate);
 	}
 
 	@DeleteMapping("/photovoltaicPanels/{id}")

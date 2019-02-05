@@ -20,7 +20,7 @@ public class WeatherData extends PositionEntity {
 	private double windSpeed;
 	
 	@Column(name = "airpressure")
-	private double airPressure;
+	private Double airPressure;
 	
 	@Column(name = "humidity")
 	private double humidity;
@@ -62,13 +62,17 @@ public class WeatherData extends PositionEntity {
 	 * @return the air pressure in hpa
 	 */
 	public double getAirPressure() {
+		if(airPressure == null){
+			return 1003.0;
+		}
 		return airPressure;
 	}
 	
 	public double getAirPressureInPascal() {
-		return airPressure * WindTurbine.CONVERT_hPA_TO_PA;
+		return getAirPressure() * WindTurbine.CONVERT_hPA_TO_PA;
 	}
-	public void setAirPressure(double airPressure) {
+
+	public void setAirPressure(Double airPressure) {
 		this.airPressure = airPressure;
 	}
 	
