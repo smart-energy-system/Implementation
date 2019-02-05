@@ -61,10 +61,10 @@ public class Consumer extends Entity {
 	/**
 	 * Solves A2.11
 	 * @param hourOfTheDay
-	 * @return the demand in kWh
+	 * @return the demand in W
 	 */
 	public double calculateDemand(int hourOfTheDay) {
-		return this.getBaseDemandPerSquareMeterForHour(hourOfTheDay)* this.getFloorAreaSize() * this.getAverageDailyOccupancy();
+		return this.getBaseDemandPerSquareMeterForHour(hourOfTheDay)* this.getFloorAreaSize() * this.getAverageDailyOccupancy() * 1000;
 	}
 	
 	

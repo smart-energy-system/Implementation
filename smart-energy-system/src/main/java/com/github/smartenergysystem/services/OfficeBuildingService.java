@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class OfficeBuildingService extends EntityService {
+public class OfficeBuildingService extends ConsumerService {
 
     Long officeBuildingId = 0L;
     HashMap<Long, OfficeBuilding> officeBuildings = new HashMap<>();

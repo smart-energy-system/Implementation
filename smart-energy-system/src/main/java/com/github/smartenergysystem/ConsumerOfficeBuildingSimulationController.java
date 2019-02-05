@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.smartenergysystem.SwaggerConfig;
+import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.services.OfficeBuildingService;
 import com.github.smartenergysystem.simulation.Home;
 import org.springframework.beans.BeanUtils;
@@ -67,6 +68,12 @@ public class ConsumerOfficeBuildingSimulationController {
 	@DeleteMapping("/{id}")
 	public void deleteOfficeBuilding(@PathVariable("id") long id) {
 		officeBuildingService.deleteOfficeBuilding(id);
+	}
+
+	@GetMapping("/{id}/demandForecast")
+	public EnergyForecast getOfficeBuildingDemandForecast(@PathVariable("id") long id, @RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
+		OfficeBuilding officeBuilding = officeBuildingService.getOfficeBuilding(id);
+		return officeBuildingService.getDemandForecast(officeBuilding,maxTimestampOffset);
 	}
 
 }

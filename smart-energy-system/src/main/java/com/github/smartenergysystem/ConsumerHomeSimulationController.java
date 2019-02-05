@@ -1,11 +1,8 @@
 package com.github.smartenergysystem;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import com.github.smartenergysystem.SwaggerConfig;
+import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.services.HomesService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +58,12 @@ public class ConsumerHomeSimulationController {
 	public double getHomeBuildingDemand(@PathVariable("id") long id,@PathVariable("hourOfTheDay") int hourOfTheDay) {
 		return homesService.computeHomeBuildingDemand(id, hourOfTheDay);
 	}
+
+	@GetMapping("/{id}/demandForecast")
+	public EnergyForecast getHomeBuildingDemandForecast(@PathVariable("id") long id, @RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
+		Home home = homesService.getHomeBuilding(id);
+		return homesService.getDemandForecast(home,maxTimestampOffset);
+	}
 	
 	@PutMapping("/{id}/hourlyBaseDemandPerSquareMeter")
 	public void sethourlyBaseDemandPerSquareMeter(@PathVariable("id") long id,@RequestBody double[] hourlyBaseDemandPerSquareMeter) {
@@ -71,6 +74,8 @@ public class ConsumerHomeSimulationController {
 	public void deleteConsumer(@PathVariable("id") long id) {
 		homesService.deleteHome(id);
 	}
+
+
 
 
 }

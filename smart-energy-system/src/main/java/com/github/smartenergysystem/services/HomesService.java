@@ -1,13 +1,14 @@
 package com.github.smartenergysystem.services;
 
+import com.github.smartenergysystem.model.EnergyForecast;
+import com.github.smartenergysystem.model.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.Home;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
-public class HomesService extends EntityService {
+public class HomesService extends ConsumerService {
 
     Long homeBuildingId = 0L;
     HashMap<Long, Home> homeBuildings = new HashMap<>();
@@ -46,4 +47,5 @@ public class HomesService extends EntityService {
         isIdValid(id, homeBuildings);
         homeBuildings.get(id).setHourlyBaseDemandPerSquareMeter(hourlyBaseDemandPerSquareMeter);
     }
+
 }

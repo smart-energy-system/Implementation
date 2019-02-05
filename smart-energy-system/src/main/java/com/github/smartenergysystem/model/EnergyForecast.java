@@ -1,9 +1,7 @@
 package com.github.smartenergysystem.model;
 
 import java.util.List;
-import java.util.Map;
 
-import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
 import io.swagger.annotations.ApiModelProperty;
 
 public class EnergyForecast {

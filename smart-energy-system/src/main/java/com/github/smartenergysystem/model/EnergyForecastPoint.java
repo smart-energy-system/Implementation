@@ -1,4 +1,4 @@
-package com.github.smartenergysystem.model.exeptions;
+package com.github.smartenergysystem.model;
 
 public class EnergyForecastPoint {
     long timestamp;

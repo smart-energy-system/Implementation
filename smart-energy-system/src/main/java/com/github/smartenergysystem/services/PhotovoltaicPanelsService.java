@@ -1,7 +1,7 @@
 package com.github.smartenergysystem.services;
 
 import com.github.smartenergysystem.model.EnergyForecast;
-import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
+import com.github.smartenergysystem.model.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import com.github.smartenergysystem.weather.WeatherForecast;
 import com.github.smartenergysystem.weather.WeatherHistory;

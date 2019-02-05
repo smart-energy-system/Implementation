@@ -2,7 +2,7 @@ package com.github.smartenergysystem.services;
 
 import java.util.*;
 
-import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
+import com.github.smartenergysystem.model.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class SimulationControllerService implements ISimulationControllerService
             summedSupplier[i] = summedSupplier[i] / 1000;
         }
 
-        //Consumers are already in kW
+        //Consumers are already in kW <-not longer true
         //Get first consumer
         int[] homeConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE]; //4 hour solutions
         double homeConsmerSmallestDemandFlexibility = Double.MAX_VALUE;
@@ -86,7 +86,7 @@ public class SimulationControllerService implements ISimulationControllerService
         for (Map.Entry<Long, Home> homeBuilding : homeBuildings.entrySet()) {
             for (int i = 0; i < homeConsumersSummed.length; i++) {
                 System.out.println("i:" + i + " Consumer:" + homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
-                homeConsumersSummed[i] = homeConsumersSummed[i] + (int) homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY));
+                homeConsumersSummed[i] = homeConsumersSummed[i] + (int) (homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) / 1000);
                 calendar.add(Calendar.HOUR_OF_DAY, 1);
                 if (homeBuilding.getValue().getDemandFlexibility() < homeConsmerSmallestDemandFlexibility) {
                     homeConsmerSmallestDemandFlexibility = homeBuilding.getValue().getDemandFlexibility();
@@ -100,7 +100,7 @@ public class SimulationControllerService implements ISimulationControllerService
         for (Map.Entry<Long, OfficeBuilding> officeBuilding : officeBuildings.entrySet()) {
             for (int i = 0; i < officeBuildingConsumersSummed.length; i++) {
                 System.out.println("i:" + i + "OfficeConsumer:" + officeBuildingService.computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
-                officeBuildingConsumersSummed[i] = officeBuildingConsumersSummed[i] + (int) officeBuildingService.computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY));
+                officeBuildingConsumersSummed[i] = officeBuildingConsumersSummed[i] + (int) (officeBuildingService.computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) /1000);
                 calendar.add(Calendar.HOUR_OF_DAY, 1);
                 if (officeBuilding.getValue().getDemandFlexibility() < officeBuildingSmallestDemandFlexibility) {
                     officeBuildingSmallestDemandFlexibility = officeBuilding.getValue().getDemandFlexibility();
