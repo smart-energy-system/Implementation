@@ -1,6 +1,7 @@
 package com.github.smartenergysystem.services;
 
 import com.github.smartenergysystem.model.EnergyForecast;
+import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.PhotovoltaicPanel;
 import com.github.smartenergysystem.weather.WeatherForecast;
 import com.github.smartenergysystem.weather.WeatherHistory;
@@ -72,16 +73,16 @@ public class PhotovoltaicPanelsService extends EntityService {
         List<WeatherForecast> weatherForecastList = getWeatherForecastForSupplier(id, maxTimestampOffset,
                 photovoltaicPanels);
         PhotovoltaicPanel photovoltaicPanel = photovoltaicPanels.get(id);
-        TreeMap<Long, Double> energyforecastMap = new TreeMap<>();
+        List<EnergyForecastPoint> forecast = new LinkedList<>();
         weatherForecastList.forEach(weatherforecast -> {
             double energy = photovoltaicPanel.computeEnergyGenerated(weatherforecast.getTemperature(),
                     weatherforecast.getGlobalHorizontalSolarIrradiance(),
                     getDayOfTheYear(weatherforecast.getTimestamp()));
-            energyforecastMap.put(weatherforecast.getTimestamp(), energy);
+            forecast.add(new EnergyForecastPoint(weatherforecast.getTimestamp(),energy));
         });
         EnergyForecast energyForecast = new EnergyForecast();
-        logger.debug("Size of generation forecast:" + energyforecastMap.size());
-        energyForecast.setForecast(energyforecastMap);
+        logger.debug("Size of generation forecast:" + forecast.size());
+        energyForecast.setForecast(forecast);
         return energyForecast;
 
     }

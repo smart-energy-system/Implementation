@@ -1,7 +1,9 @@
 package com.github.smartenergysystem.model;
 
+import java.util.List;
 import java.util.Map;
 
+import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
 import io.swagger.annotations.ApiModelProperty;
 
 public class EnergyForecast {
@@ -13,7 +15,7 @@ public class EnergyForecast {
 	private String unit = UNIT;
 	
 	@ApiModelProperty(value = "Map of the timestamps and the values")
-	private Map<Long,Double> forecast;
+	private List<EnergyForecastPoint> forecast;
 	
 	public String getUnit() {
 		return unit;
@@ -21,13 +23,12 @@ public class EnergyForecast {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	public Map<Long, Double> getForecast() {
+
+	public List<EnergyForecastPoint> getForecast() {
 		return forecast;
 	}
-	public void setForecast(Map<Long, Double> forecast) {
+
+	public void setForecast(List<EnergyForecastPoint> forecast) {
 		this.forecast = forecast;
 	}
-	
-	
-
 }

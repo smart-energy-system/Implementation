@@ -2,6 +2,7 @@ package com.github.smartenergysystem.services;
 
 import java.util.*;
 
+import com.github.smartenergysystem.model.exeptions.EnergyForecastPoint;
 import com.github.smartenergysystem.simulation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +62,10 @@ public class SimulationControllerService implements ISimulationControllerService
 
         for (EnergyForecast energyForecast : forecasts) {
             int counter = 0;
-            System.out.println(energyForecast.getForecast().entrySet().size());
-            for (Map.Entry<Long, Double> forecastItem : energyForecast.getForecast().entrySet()) {
-                summedSupplier[counter] = summedSupplier[counter] + (int) forecastItem.getValue().intValue();
-                System.out.println(forecastItem.getValue());
+            System.out.println(energyForecast.getForecast().size());
+            for (EnergyForecastPoint forecastpoint : energyForecast.getForecast()) {
+                summedSupplier[counter] = summedSupplier[counter] + (int) forecastpoint.getValue().intValue();
+                System.out.println(forecastpoint.getValue());
                 if (counter == summedSupplier.length - 1) {
                     break;
                 }
