@@ -166,7 +166,7 @@ public class EntityService {
      * @param endDate
      * @return
      */
-    private List<Date> getRequiredDates(Date startDate, Date endDate) {
+    public List<Date> getRequiredDates(Date startDate, Date endDate) {
         Date startDateHour = roundDownToNearestHour(startDate);
         Date endDateHour  = roundDownToNearestHour(endDate);
         Calendar calender = getUtcCalendar(startDateHour);

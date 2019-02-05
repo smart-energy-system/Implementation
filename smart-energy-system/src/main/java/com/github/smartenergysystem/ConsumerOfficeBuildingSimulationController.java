@@ -1,4 +1,5 @@
 package com.github.smartenergysystem;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -7,13 +8,17 @@ import com.github.smartenergysystem.SwaggerConfig;
 import com.github.smartenergysystem.model.EnergyForecast;
 import com.github.smartenergysystem.services.OfficeBuildingService;
 import com.github.smartenergysystem.simulation.Home;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import com.github.smartenergysystem.model.ConsumerWithIdDTO;
 import com.github.smartenergysystem.simulation.OfficeBuilding;
 
 import io.swagger.annotations.Api;
+
+import static com.github.smartenergysystem.SupplierWindTurbineSimulationController.DATE_PATTERN;
 
 @RestController
 @Api(produces ="application/json",tags = { SwaggerConfig.CONSUMER_TAG_NAME})
@@ -71,9 +76,12 @@ public class ConsumerOfficeBuildingSimulationController {
 	}
 
 	@GetMapping("/{id}/demandForecast")
-	public EnergyForecast getOfficeBuildingDemandForecast(@PathVariable("id") long id, @RequestParam(name = "maxTimestampOffset", defaultValue = "86400000") long maxTimestampOffset) {
+	public EnergyForecast getOfficeBuildingDemandForecast(@PathVariable("id") long id,@ApiParam(name = "startDate", value = "The start date", defaultValue = "2019-01-07T00:00Z")
+	@RequestParam("startDate") @DateTimeFormat(pattern = DATE_PATTERN) Date startDate,
+														  @ApiParam(name = "endDate", value = "The end date", defaultValue = "2019-01-07T23:00Z")
+															  @RequestParam("endDate") @DateTimeFormat(pattern = DATE_PATTERN) Date endDate) {
 		OfficeBuilding officeBuilding = officeBuildingService.getOfficeBuilding(id);
-		return officeBuildingService.getDemandForecast(officeBuilding,maxTimestampOffset);
+		return officeBuildingService.getDemandForecast(officeBuilding,startDate,endDate);
 	}
 
 }

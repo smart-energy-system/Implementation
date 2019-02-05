@@ -97,8 +97,7 @@ public class SupplierWindTurbineSimulationController {
     @RequestParam("startDate") @DateTimeFormat(pattern = DATE_PATTERN) Date startDate,
                                                              @ApiParam(name = "endDate", value = "The end date", defaultValue = "2019-01-07T23:00Z")
                                                              @RequestParam("endDate") @DateTimeFormat(pattern = DATE_PATTERN) Date endDate) {
-        System.out.println(Long.MAX_VALUE);
-        logger.trace("Request to WindTubine getWindTurbineEnergyOutputForecast");
+        logger.info("Request to WindTubine getWindTurbineEnergyOutputForecast with:"+ startDate + " | " + endDate);
         return windTurbineService.computeEnergyGenerateForecastWindTurbine(id, startDate, endDate);
     }
 
