@@ -43,21 +43,28 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Override
     @Transactional(readOnly = true)
-    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, int efficiencyChargingAsPartsOfHundred) {
-
+    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate) {
+        startDate = EntityService.roundDownToNearestHour(startDate);
+        endDate = EntityService.roundDownToNearestHour(endDate);
+        logger.info("Solving for :"+ startDate + " end:"+ endDate);
         //LinkedList<Integer> summedSuppler = new LinkedList<>();
         System.out.println("Solve");
         int[] summedSupplier = new int[NUMBER_OF_HOUR_TO_CALCULATE];
         LinkedList<EnergyForecast> forecasts = new LinkedList<>();
         Map<Long, PhotovoltaicPanel> photovoltaicPanels = photovoltaicPanelsService.getPhotovoltaicPanels();
+        //Calendar calendarSupplier = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        //Date startDate = new Date();
+        //calendarSupplier.setTime(startDate);
+        //calendarSupplier.add(Calendar.HOUR_OF_DAY,NUMBER_OF_HOUR_TO_CALCULATE);
+        //Date endDate = calendarSupplier.getTime();
         for (Map.Entry<Long, PhotovoltaicPanel> entry : photovoltaicPanels.entrySet()) {
-            //TODO FIXME  BROKEN  EnergyForecast energyForecast = photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
-            //forecasts.add(energyForecast);
+            EnergyForecast energyForecast = photovoltaicPanelsService.computeEnergyGenerateForecastPhotovoltaicPanel(entry.getKey(), startDate,endDate);
+            forecasts.add(energyForecast);
         }
         Map<Long, WindTurbine> windTurbines = windTurbineService.getWindTurbines();
         for (Map.Entry<Long, WindTurbine> entry : windTurbines.entrySet()) {
-            //TODO FIXME  BROKEN EnergyForecast energyForecast = windTurbineService.computeEnergyGenerateForecastWindTurbine(entry.getKey(), 1000 * 60 * 60 * NUMBER_OF_HOUR_TO_CALCULATE);
-            //forecasts.add(energyForecast);
+            EnergyForecast energyForecast = windTurbineService.computeEnergyGenerateForecastWindTurbine(entry.getKey(), startDate,endDate);
+            forecasts.add(energyForecast);
         }
 
         for (EnergyForecast energyForecast : forecasts) {
@@ -83,21 +90,37 @@ public class SimulationControllerService implements ISimulationControllerService
         double homeConsmerSmallestDemandFlexibility = Double.MAX_VALUE;
         Calendar calendar = Calendar.getInstance();
         Map<Long,Home> homeBuildings = homesService.getHomeBuildings();
+//        for (Map.Entry<Long, Home> homeBuilding : homeBuildings.entrySet()) {
+//            for (int i = 0; i < homeConsumersSummed.length; i++) {
+//                System.out.println("i:" + i + " Consumer:" + homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
+//                homeConsumersSummed[i] = homeConsumersSummed[i] + (int) (homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) / 1000);
+//                calendar.add(Calendar.HOUR_OF_DAY, 1);
+//                if (homeBuilding.getValue().getDemandFlexibility() < homeConsmerSmallestDemandFlexibility) {
+//                    homeConsmerSmallestDemandFlexibility = homeBuilding.getValue().getDemandFlexibility();
+//                }
+//            }
+//        }
         for (Map.Entry<Long, Home> homeBuilding : homeBuildings.entrySet()) {
-            for (int i = 0; i < homeConsumersSummed.length; i++) {
-                System.out.println("i:" + i + " Consumer:" + homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
-                homeConsumersSummed[i] = homeConsumersSummed[i] + (int) (homesService.computeHomeBuildingDemand(homeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) / 1000);
-                calendar.add(Calendar.HOUR_OF_DAY, 1);
-                if (homeBuilding.getValue().getDemandFlexibility() < homeConsmerSmallestDemandFlexibility) {
-                    homeConsmerSmallestDemandFlexibility = homeBuilding.getValue().getDemandFlexibility();
+            EnergyForecast energyForecast = homesService.getDemandForecast(homeBuilding.getValue(),startDate,endDate);
+            int counter =0;
+            for(EnergyForecastPoint energyForecastPoint : energyForecast.getForecast()){
+                homeConsumersSummed[counter] = homeConsumersSummed[counter] +(energyForecastPoint.getValue().intValue() /1000);
+                if (counter == homeConsumersSummed.length - 1) {
+                    break;
                 }
+                counter++;
+            }
+            if (homeBuilding.getValue().getDemandFlexibility() < homeConsmerSmallestDemandFlexibility) {
+                    homeConsmerSmallestDemandFlexibility = homeBuilding.getValue().getDemandFlexibility();
             }
         }
+
+
         int[] officeBuildingConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE];
         calendar = Calendar.getInstance();
         double officeBuildingSmallestDemandFlexibility = Double.MAX_VALUE;
         Map<Long,OfficeBuilding> officeBuildings = officeBuildingService.getOfficeBuildings();
-        for (Map.Entry<Long, OfficeBuilding> officeBuilding : officeBuildings.entrySet()) {
+/*        for (Map.Entry<Long, OfficeBuilding> officeBuilding : officeBuildings.entrySet()) {
             for (int i = 0; i < officeBuildingConsumersSummed.length; i++) {
                 System.out.println("i:" + i + "OfficeConsumer:" + officeBuildingService.computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) + "Hour:" + calendar.get(Calendar.HOUR_OF_DAY));
                 officeBuildingConsumersSummed[i] = officeBuildingConsumersSummed[i] + (int) (officeBuildingService.computeOfficeBuildingDemand(officeBuilding.getKey(), calendar.get(Calendar.HOUR_OF_DAY)) /1000);
@@ -105,6 +128,21 @@ public class SimulationControllerService implements ISimulationControllerService
                 if (officeBuilding.getValue().getDemandFlexibility() < officeBuildingSmallestDemandFlexibility) {
                     officeBuildingSmallestDemandFlexibility = officeBuilding.getValue().getDemandFlexibility();
                 }
+            }
+        }*/
+
+        for (Map.Entry<Long, OfficeBuilding> officeBuilding : officeBuildings.entrySet()) {
+            EnergyForecast energyForecast = homesService.getDemandForecast(officeBuilding.getValue(),startDate,endDate);
+            int counter =0;
+            for(EnergyForecastPoint energyForecastPoint : energyForecast.getForecast()){
+                officeBuildingConsumersSummed[counter] = officeBuildingConsumersSummed[counter] +(energyForecastPoint.getValue().intValue()/1000);
+                if (counter == officeBuildingConsumersSummed.length - 1) {
+                    break;
+                }
+                counter++;
+            }
+            if (officeBuilding.getValue().getDemandFlexibility() < officeBuildingSmallestDemandFlexibility) {
+                homeConsmerSmallestDemandFlexibility = officeBuilding.getValue().getDemandFlexibility();
             }
         }
 
@@ -136,7 +174,7 @@ public class SimulationControllerService implements ISimulationControllerService
         return solver.solve(summedSupplier,
                 homeConsumersSummed, (int) (homeConsmerSmallestDemandFlexibility * 100),
                 officeBuildingConsumersSummed, (int) (officeBuildingSmallestDemandFlexibility * 100),
-                exportPricePerUnit, importCostPerUnit,batteries.get(1L),80);
+                exportPricePerUnit, importCostPerUnit,batteries.get(1L),(int)(batteries.get(1L).getChargingEfficiency()*100));
     }
 
 

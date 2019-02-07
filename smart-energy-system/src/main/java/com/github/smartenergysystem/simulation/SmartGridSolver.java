@@ -231,6 +231,7 @@ public class SmartGridSolver {
         smartGridModel.setObjective(Model.MAXIMIZE, totalProfit);
         org.chocosolver.solver.Solver solver = smartGridModel.getSolver();
         SmartGridSolverSolution smartGridSolverSolution = null;
+        solver.limitTime("10s");
         while (solver.solve()) {
             smartGridSolverSolution = new SmartGridSolverSolution();
 

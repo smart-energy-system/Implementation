@@ -83,9 +83,20 @@ public class EntityService {
             List<WeatherItem> weatherItemsInRightTime = getWeatherItemsInRightTime(startDate, endDate, weatherItems);
 
             List<Date> requieredDates = getRequiredDates(startDate,endDate);
+            logger.info("There are " + requieredDates.size() + " Hours requiered");
             List<Date> missingHours = calculateMissingHours(requieredDates,weatherItemsInRightTime);
             missingHours.forEach(date -> logger.info("Missing:"+date));
             missingHours.forEach(date -> weatherItemsInRightTime.add(extrapolateMissingHour(date,weatherItems,closestWeatherItem.getLatitude(),closestWeatherItem.getLongitude())));
+            logger.info("There are " + weatherItemsInRightTime.size() + " Hours found");
+            weatherItemsInRightTime.forEach(weatherItem ->logger.info("Got:"+ weatherItem));
+            Collections.sort(weatherItemsInRightTime, new Comparator<WeatherItem>() {
+                @Override
+                public int compare(WeatherItem o1, WeatherItem o2) {
+                    Date d1 = new Date(o1.getTimestamp());
+                    Date d2 = new Date(o2.getTimestamp());
+                    return d1.compareTo(d2);
+                }
+            });
             return weatherItemsInRightTime;
 //            logger.debug("Requesting forecast data for entity " + id);
 //            List<WeatherForecast> weatherForecastList = weatherForecastRepository
@@ -119,7 +130,7 @@ public class EntityService {
                 weatherItemReturn.setWindSpeed(weatherItem.getWindSpeed());
                 weatherItemReturn.setLatitude(weatherItem.getLatitude());
                 weatherItemReturn.setLongitude(weatherItem.getLongitude());
-                logger.info("Found old value in db from:"+ new Date(weatherItem.getTimestamp()));
+                logger.info("Found old value in db from:"+ new Date(weatherItem.getTimestamp()) + " new Date is: " + new Date(weatherItemReturn.getTimestamp()) );
                 return weatherItemReturn;
             }
 /*        weatherItems.forEach(weatherItem -> {
@@ -181,7 +192,7 @@ public class EntityService {
         return requiredHours;
     }
 
-    private Date roundDownToNearestHour(Date date){
+    public static Date roundDownToNearestHour(Date date){
         Calendar c = getUtcCalendar(date);
         c.set(Calendar.MILLISECOND,0);
         c.set(Calendar.MINUTE,0);
@@ -189,7 +200,7 @@ public class EntityService {
         return c.getTime();
     }
 
-    private Calendar getUtcCalendar(Date startDate) {
+    private static Calendar getUtcCalendar(Date startDate) {
         Calendar calender = Calendar.getInstance();
         calender.setTimeZone(TimeZone.getTimeZone("UTC"));
         calender.setTime(startDate);

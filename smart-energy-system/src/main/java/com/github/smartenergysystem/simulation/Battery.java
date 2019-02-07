@@ -12,7 +12,7 @@ public class Battery extends Entity{
 	private double maximumDischargingRate;
 	@ApiModelProperty(required = true, example = "0")
 	private double storedEnergy;
-	@ApiModelProperty(required = true, example = "0")
+	@ApiModelProperty(required = true, example = "1")
 	private double chargingEfficiency;
 
 	/**

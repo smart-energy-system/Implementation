@@ -6,6 +6,8 @@ import javax.persistence.MappedSuperclass;
 import com.github.smartenergysystem.simulation.PositionEntity;
 import com.github.smartenergysystem.simulation.WindTurbine;
 
+import java.util.Date;
+
 @MappedSuperclass
 public class WeatherData extends PositionEntity {
 	
@@ -91,7 +93,7 @@ public class WeatherData extends PositionEntity {
 	@Override
 	public String toString() {
 		return "WeatherForecast [id=" + id + ", temperature=" + temperature + ", windSpeed=" + windSpeed
-				+ ", airPressure=" + airPressure + ", humidity=" + humidity + ", timestamp=" + timestamp + ", latitude="
+				+ ", airPressure=" + airPressure + ", humidity=" + humidity + ", timestamp(as Date)=" + new Date(timestamp) + ", latitude="
 				+ latitude + ", longitude=" + longitude + "]";
 	}
 	

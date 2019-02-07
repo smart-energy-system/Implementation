@@ -2,6 +2,8 @@ package com.github.smartenergysystem.services;
 
 import com.github.smartenergysystem.simulation.SmartGridSolverSolution;
 
+import java.util.Date;
+
 public interface ISimulationControllerService {
 	//public Long addPhotovoltaicPanel(PhotovoltaicPanel photovoltaicPanel);
 	//public Map<Long,PhotovoltaicPanel> getPhotovoltaicPanels();
@@ -31,7 +33,9 @@ public interface ISimulationControllerService {
 	//public Map<Long, Home> getHomeBuildings();
 	//public double computeHomeBuildingDemand(long id, int hourOfTheDay);
 	//public void setHomeBuildingsHourlyBaseDemandPerSquareMeter(long id, double[] hourlyBaseDemandPerSquareMeter);
-	public SmartGridSolverSolution solve(int calculationBound, int exportPrice, int efficiencyChargingAsPartsOfHundred);
+	//public SmartGridSolverSolution solve(int calculationBound, int exportPrice);
+
+	public SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate);
 
 	//public void deleteHome(long id);
 
