@@ -43,7 +43,7 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Override
     @Transactional(readOnly = true)
-    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate) {
+    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate, int batteryFillLevelinWatt) {
         startDate = EntityService.roundDownToNearestHour(startDate);
         endDate = EntityService.roundDownToNearestHour(endDate);
         logger.info("Solving for :"+ startDate + " end:"+ endDate);
@@ -174,7 +174,7 @@ public class SimulationControllerService implements ISimulationControllerService
         return solver.solve(summedSupplier,
                 homeConsumersSummed, (int) (homeConsmerSmallestDemandFlexibility * 100),
                 officeBuildingConsumersSummed, (int) (officeBuildingSmallestDemandFlexibility * 100),
-                exportPricePerUnit, importCostPerUnit,batteries.get(1L),(int)(batteries.get(1L).getChargingEfficiency()*100));
+                exportPricePerUnit, importCostPerUnit,batteries.get(1L),(int)(batteries.get(1L).getChargingEfficiency()*100),batteryFillLevelinWatt/1000);
     }
 
 

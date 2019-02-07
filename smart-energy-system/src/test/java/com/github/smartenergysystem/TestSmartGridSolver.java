@@ -29,7 +29,7 @@ public class TestSmartGridSolver {
 		SmartGridSolver solver = new SmartGridSolver(100);
 		long millis = System.currentTimeMillis();
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour,consumer1,30,
-				consumer2,40,exportPricePerUnit,importCostPerUnit,battery,80);
+				consumer2,40,exportPricePerUnit,importCostPerUnit,battery,80,0);
 		//Solver should shift demand away form first step
 		assertThat(solution.getSolutionSteps().get(0).getPnegShift()[0],
 				greaterThan(0));
@@ -63,7 +63,7 @@ public class TestSmartGridSolver {
 		Battery battery = getBattery(maxChargeRateInkW);
 		SmartGridSolver solver = new SmartGridSolver(100);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
-				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 100);
+				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 100,0);
 		//Should charge every step
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
 		//Should charge the whole time, except for the last step
@@ -88,7 +88,7 @@ public class TestSmartGridSolver {
 		Battery battery = getBattery(maxChargeRateInkW);
 		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,true);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
-				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
+				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		//Should charge every step
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
 		checkBatteryIsNeverUsed(steps);
@@ -114,7 +114,7 @@ public class TestSmartGridSolver {
 		Battery battery = getBattery(maxChargeRateInkW);
 		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
-				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
+				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		//Should charge every step
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
 		checkBatteryIsNeverUsed(steps);
@@ -139,7 +139,7 @@ public class TestSmartGridSolver {
 		Battery battery = getBattery(maxChargeRateInkW);
 		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
-				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
+				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
 		for (int stepCount = 0; stepCount < steps.size()-1; stepCount++) {
 			assertEquals("Should only discharge in the last step",0, steps.get(stepCount).getDiscargeRate());
@@ -163,7 +163,7 @@ public class TestSmartGridSolver {
 		Battery battery = getBatteryZero();
 		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,true);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
-				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80);
+				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();
 		checkBatteryIsNeverUsed(steps);
 		assertThat("Should reduce import in Step 1 because importing is expensive",steps.get(1).getPnegShift()[0],

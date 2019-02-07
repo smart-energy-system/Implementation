@@ -42,7 +42,8 @@ public class SmartGridSolver {
                                          int[] consumer1, int demandFlexibilityAsPartsOfHundred1,
                                          int[] consumer2, int demandFlexibilityAsPartsOfHundred2,
                                          int[] exportPricePerUnit, int[] importCostPerUnit, Battery battery,
-                                         int efficiencyChargingAsPartsOfHundred) {
+                                         int efficiencyChargingAsPartsOfHundred,
+                                         int batteryFillLevel) {
 
         List<Integer> allNumbers = convertToIntegerList(supplerSummedForEachHour);
         allNumbers.addAll(convertToIntegerList(consumer1));
@@ -111,7 +112,9 @@ public class SmartGridSolver {
             batteryFillLevelPerHour[index] = smartGridModel.intVar("batteryFillLevelPerHour_" + index, 0, maximumStoredEnergy);
             batteryFillLevelPerHour[index].sub(dischargeRatePerHour[index]).ge(0).post();
         }
-        batteryFillLevelPerHour[0].eq(0).post();
+        //Beginn with charge
+        batteryFillLevelPerHour[0].eq(batteryFillLevel).post();
+
         for (int index = 0; index < supplerSummedForEachHour.length - 1; index++) {
             System.out.println(index);
             realchargeRatePerHour[index].eq(chargeRatePerHour[index].mul(efficiencyChargingAsPartsOfHundred).div(100)).post();
