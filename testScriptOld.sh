@@ -2,13 +2,9 @@ echo "Test Script"
 #Creates a battery
 curl -X POST "http://localhost:8090/supplier/batteries" -H  "accept: */*" -H  "Content-Type: application/json" -d "
 {
-\"latitude\": 31.230391,
-\"longitude\": 121.473701,
-\"displayName\": \"Battery 1\",
 \"maximumChargingRate\": 4000, 
 \"maximumDischargingRate\": 2000, 
 \"maximumStoredEnergy\": 12000, 
-\"chargingEfficiency\": 1,
 \"storedEnergy\": 0}
 " 
 sleep 3s
@@ -18,7 +14,6 @@ sleep 3s
 #Create a solar panle
 curl -X POST "http://localhost:8090/supplier/photovoltaicPanels" -H  "accept: */*" -H  "Content-Type: application/json" -d "
 {
-\"displayName\": \"Panel 1\",
 \"latitude\": 31.230391,
 \"longitude\": 121.473701,
 \"maximumPowerYield\": 260,
@@ -32,7 +27,6 @@ sleep 3s
 #Create wind turbine (use bladeRadius 80 if no wind, default 40)
 curl -X POST "http://localhost:8090/supplier/windTurbines" -H  "accept: */*" -H  "Content-Type: application/json" -d "
 {
-\"displayName\": \"Wind Turbine 1\",
 \"bladeRadius\": 40,
 \"efficiency\": 1,
 \"latitude\": 31.230391,
@@ -44,13 +38,10 @@ curl -X GET "http://localhost:8090/supplier/windTurbines" -H  "accept: */*"
 sleep 3s
 #Create home consumer
 curl -X POST "http://localhost:8090/consumer/homes" -H  "accept: */*" -H  "Content-Type: application/json" -d "
-{
-\"displayName\": \"Home\",
+{ 
 \"averageDailyOccupancy\": 1,
 \"demandFlexibility\": 0.5,
-\"floorAreaSize\": 1000},
-\"latitude\": 31.230391,
-\"longitude\": 121.473701}
+\"floorAreaSize\": 1000}
 "
 sleep 3s
 #Show consumer
@@ -62,15 +53,12 @@ curl -X POST "http://localhost:8090/consumer/officeBuildings" -H  "accept: */*" 
 {  
 \"averageDailyOccupancy\": 1,
 \"demandFlexibility\": 0.5,
-\"floorAreaSize\": 100,
-\"latitude\": 31.230391,
-\"longitude\": 121.473701,
-\"displayName\": \"Office\"}
+\"floorAreaSize\": 100}
 "
 sleep 3s
 #Show office building
 curl -X GET "http://localhost:8090/consumer/officeBuildings" -H  "accept: */*"
 sleep 5s
 #Start solver
-#curl -X GET "http://localhost:8090/solver?calculationBound=100&efficiencyChargingAsPartsOfHundred=80&exportPrice=4" -H  "accept: */*"
+curl -X GET "http://localhost:8090/solver?calculationBound=100&efficiencyChargingAsPartsOfHundred=80&exportPrice=4" -H  "accept: */*"
 sleep 3s
