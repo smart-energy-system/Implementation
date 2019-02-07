@@ -1,5 +1,6 @@
 package com.github.smartenergysystem.simulation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,10 +68,11 @@ public class PhotovoltaicPanel extends Entity {
 	public void setMaximumPowerYield(double maximumPowerYield) {
 		this.maximumPowerYield = maximumPowerYield;
 	}
-	
+
+	@JsonIgnore
 	@ApiModelProperty(hidden=true)
 	public double getSolarPanelYield() {
-		return maximumPowerYield/CONVERT_W_TO_KW/moduleArea;
+		return maximumPowerYield/CONVERT_W_TO_KW;
 	}
 	
 	/**

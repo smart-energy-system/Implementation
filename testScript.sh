@@ -21,7 +21,7 @@ curl -X POST "http://localhost:8090/supplier/photovoltaicPanels" -H  "accept: */
 \"displayName\": \"Panel 1\",
 \"latitude\": 31.230391,
 \"longitude\": 121.473701,
-\"maximumPowerYield\": 260,
+\"maximumPowerYield\": 2600,
 \"moduleArea\": 10,
 \"tiltAngle\": 0.3}
 "
@@ -62,7 +62,7 @@ curl -X POST "http://localhost:8090/consumer/officeBuildings" -H  "accept: */*" 
 {  
 \"averageDailyOccupancy\": 1,
 \"demandFlexibility\": 0.5,
-\"floorAreaSize\": 100,
+\"floorAreaSize\": 50,
 \"latitude\": 31.230391,
 \"longitude\": 121.473701,
 \"displayName\": \"Office\"}
