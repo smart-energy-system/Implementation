@@ -16,10 +16,12 @@ public class SmartGridSolver {
     int LB;
 
     boolean onlySingleShifting = false;
+    int timeout = 200;
 
-    public SmartGridSolver(int maxBound) {
+    public SmartGridSolver(int maxBound, int timeout) {
         UB = maxBound;
         LB = -maxBound;
+        this.timeout =timeout;
     }
 
     /**
@@ -234,7 +236,7 @@ public class SmartGridSolver {
         smartGridModel.setObjective(Model.MAXIMIZE, totalProfit);
         org.chocosolver.solver.Solver solver = smartGridModel.getSolver();
         SmartGridSolverSolution smartGridSolverSolution = null;
-        solver.limitTime("10s");
+        solver.limitTime(timeout+"s");
         while (solver.solve()) {
             smartGridSolverSolution = new SmartGridSolverSolution();
 

@@ -26,7 +26,7 @@ public class TestSmartGridSolver {
 		battery.setMaximumChargingRate(5);
 		battery.setMaximumDischargingRate(10);
 		battery.setMaximumStoredEnergy(0);
-		SmartGridSolver solver = new SmartGridSolver(100);
+		SmartGridSolver solver = new SmartGridSolver(100,80000);
 		long millis = System.currentTimeMillis();
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour,consumer1,30,
 				consumer2,40,exportPricePerUnit,importCostPerUnit,battery,80,0);
@@ -61,7 +61,7 @@ public class TestSmartGridSolver {
 		int[] importCostPerUnit = new int[]{2, 2, 2, 2};
 		int maxChargeRateInkW = 5;//It takes multiple steps to charge the battery
 		Battery battery = getBattery(maxChargeRateInkW);
-		SmartGridSolver solver = new SmartGridSolver(100);
+		SmartGridSolver solver = new SmartGridSolver(100,80000);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
 				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 100,0);
 		//Should charge every step
@@ -112,7 +112,7 @@ public class TestSmartGridSolver {
 		int[] importCostPerUnit = new int[]{2, 2, 2, 2};
 		int maxChargeRateInkW = 5;
 		Battery battery = getBattery(maxChargeRateInkW);
-		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND);
+		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,80000);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
 				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		//Should charge every step
@@ -137,7 +137,7 @@ public class TestSmartGridSolver {
 
 		int maxChargeRateInkW = 5;
 		Battery battery = getBattery(maxChargeRateInkW);
-		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND);
+		SmartGridSolver solver = new SmartGridSolver(SOLVER_BOUND,80000);
 		SmartGridSolverSolution solution = solver.solve(supplerSummedForEachHour, consumer1, 30,
 				consumer2, 40, exportPricePerUnit, importCostPerUnit, battery, 80,0);
 		List<SmartGridSolverSolutionStep> steps = solution.getSolutionSteps();

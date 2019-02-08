@@ -30,8 +30,10 @@ public class SolverController {
                                               @RequestParam("startDate") @DateTimeFormat(pattern = DATE_PATTERN) Date startDate,
                                           @ApiParam(name = "endDate", value = "The end date", defaultValue = "2019-01-07T23:00Z")
                                               @RequestParam("endDate") @DateTimeFormat(pattern = DATE_PATTERN) Date endDate,
-                                          @RequestParam(name = "batteryFillLevelinWatt", defaultValue = "2000") int batteryFillLevelinWatt) {
+                                          @RequestParam(name = "batteryFillLevelinWatt", defaultValue = "2000") int batteryFillLevelinWatt,
+                                        @RequestParam(name = "maxSteps", defaultValue = "4") int maxSteps,
+                                          @RequestParam(name = "timeoutInS", defaultValue = "4") int timeout) {
 
-       return simulationControllerService.solve(calculationBound,exportPrice, startDate,endDate, batteryFillLevelinWatt);
+       return simulationControllerService.solve(calculationBound,exportPrice, startDate,endDate, batteryFillLevelinWatt,maxSteps,timeout);
     }
 }

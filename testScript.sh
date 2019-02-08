@@ -21,7 +21,7 @@ curl -X POST "http://localhost:8090/supplier/photovoltaicPanels" -H  "accept: */
 \"displayName\": \"Panel 1\",
 \"latitude\": 31.230391,
 \"longitude\": 121.473701,
-\"maximumPowerYield\": 2600,
+\"maximumPowerYield\": 260,
 \"moduleArea\": 10,
 \"tiltAngle\": 0.3}
 "
@@ -32,7 +32,7 @@ sleep 3s
 #Create wind turbine (use bladeRadius 80 if no wind, default 40)
 curl -X POST "http://localhost:8090/supplier/windTurbines" -H  "accept: */*" -H  "Content-Type: application/json" -d "
 {
-\"displayName\": \"Wind Turbine 1\",
+\"displayName\": \"Wind 1\",
 \"bladeRadius\": 40,
 \"efficiency\": 1,
 \"latitude\": 31.230391,

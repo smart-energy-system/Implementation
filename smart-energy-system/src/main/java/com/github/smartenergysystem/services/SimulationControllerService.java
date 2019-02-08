@@ -15,7 +15,7 @@ import com.github.smartenergysystem.model.EnergyForecast;
 @Service
 public class SimulationControllerService implements ISimulationControllerService {
 
-    private static final int NUMBER_OF_HOUR_TO_CALCULATE = 4;
+    //private static final int NUMBER_OF_HOUR_TO_CALCULATE = 4;
     private static final int CONSTANT_IMPORT_CONST_PER_UNIT = 35;
     private static final int CONSTANT_EXPORT_PRICE_PER_UNIT = 30;
 
@@ -43,13 +43,13 @@ public class SimulationControllerService implements ISimulationControllerService
 
     @Override
     @Transactional(readOnly = true)
-    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate, int batteryFillLevelinWatt) {
+    public synchronized SmartGridSolverSolution solve(int calculationBound, int exportPrice, Date startDate, Date endDate, int batteryFillLevelinWatt,int maxSteps,int timeout) {
         startDate = EntityService.roundDownToNearestHour(startDate);
         endDate = EntityService.roundDownToNearestHour(endDate);
         logger.info("Solving for :"+ startDate + " end:"+ endDate);
         //LinkedList<Integer> summedSuppler = new LinkedList<>();
         System.out.println("Solve");
-        int[] summedSupplier = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        int[] summedSupplier = new int[maxSteps];
         LinkedList<EnergyForecast> forecasts = new LinkedList<>();
         Map<Long, PhotovoltaicPanel> photovoltaicPanels = photovoltaicPanelsService.getPhotovoltaicPanels();
         //Calendar calendarSupplier = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -86,7 +86,7 @@ public class SimulationControllerService implements ISimulationControllerService
 
         //Consumers are already in kW <-not longer true
         //Get first consumer
-        int[] homeConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE]; //4 hour solutions
+        int[] homeConsumersSummed = new int[maxSteps]; //4 hour solutions
         double homeConsmerSmallestDemandFlexibility = Double.MAX_VALUE;
         Calendar calendar = Calendar.getInstance();
         Map<Long,Home> homeBuildings = homesService.getHomeBuildings();
@@ -116,7 +116,7 @@ public class SimulationControllerService implements ISimulationControllerService
         }
 
 
-        int[] officeBuildingConsumersSummed = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        int[] officeBuildingConsumersSummed = new int[maxSteps];
         calendar = Calendar.getInstance();
         double officeBuildingSmallestDemandFlexibility = Double.MAX_VALUE;
         Map<Long,OfficeBuilding> officeBuildings = officeBuildingService.getOfficeBuildings();
@@ -156,8 +156,8 @@ public class SimulationControllerService implements ISimulationControllerService
 
         logger.info("OfficeBuildingConsumers flex:"+officeBuildingSmallestDemandFlexibility);
         logger.info("homeConsumers flex:"+homeConsmerSmallestDemandFlexibility);
-        int[] importCostPerUnit = priceService.requestPrices(NUMBER_OF_HOUR_TO_CALCULATE);
-        int[] exportPricePerUnit = new int[NUMBER_OF_HOUR_TO_CALCULATE];
+        int[] importCostPerUnit = priceService.requestPrices(maxSteps);
+        int[] exportPricePerUnit = new int[maxSteps];
         for (int i = 0; i < exportPricePerUnit.length; i++) {
             exportPricePerUnit[i] = exportPrice;
         }
@@ -169,7 +169,7 @@ public class SimulationControllerService implements ISimulationControllerService
 //        }
 //        logger.info("All consumers summed for each hour:");
 //        logger.info(Arrays.toString(summedConsumers));
-        SmartGridSolver solver = new SmartGridSolver(calculationBound);
+        SmartGridSolver solver = new SmartGridSolver(calculationBound,timeout);
         Map<Long,Battery> batteries = batteryService.getBatterys();
         return solver.solve(summedSupplier,
                 homeConsumersSummed, (int) (homeConsmerSmallestDemandFlexibility * 100),
